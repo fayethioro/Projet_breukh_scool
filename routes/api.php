@@ -22,7 +22,12 @@ use App\Http\Controllers\NiveauController;
 // });
 
 
-// Route::get("/classes", [ClasseController::class, 'index']);
+Route::resource("/niveaux", NiveauController::class);
+
+
+// Route::get("/niveaux", [NiveauController::class, 'index']);
+
 
 Route::resource("/classes", ClasseController::class);
-Route::resource("/niveaux", NiveauController::class);
+Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
+

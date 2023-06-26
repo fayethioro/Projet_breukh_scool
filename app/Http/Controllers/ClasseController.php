@@ -15,20 +15,23 @@ class ClasseController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $niveau = Niveau::find(1);
-
+        return response()->json(ClasseResource::collection(Classe::all()));
+    }
+    public function classeById($id)
+    {
+        $niveau = Niveau::find($id);
         return [
             'statusCode' => Response::HTTP_OK,
             'message' => '',
             'Niveau' => $niveau->libelle,
-            'data'   =>ClasseResource::collection($niveau->classes)
+            'data'   => ClasseResource::collection($niveau->classes)
         ];
     }
 
     /**
      * Show the form for creating a new resource.
      */
-
 }

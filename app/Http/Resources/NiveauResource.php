@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\ClasseResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class NiveauResource extends JsonResource
@@ -16,8 +17,8 @@ class NiveauResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "classse" => $this->classe->libelle,
-            // "niveau" => $this->niveau_id
+            "niveau" => $this->libelle,
+            "classe" => ClasseResource::collection($this->classes)
         ];
     }
 }
