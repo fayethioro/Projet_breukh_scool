@@ -12,6 +12,15 @@ class NiveauSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $niveaux = [
+            [
+                "libelle" => "ELEMENTAIRE"
+            ],
+            [
+                "libelle" => 'SECONDAIRE'
+            ]
+        ];
+
+        \App\Models\Niveau::insert($niveaux);
     }
 }
