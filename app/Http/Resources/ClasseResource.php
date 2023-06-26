@@ -16,7 +16,7 @@ class ClasseResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "classse" => $this->libelle
+            "classe" => $this->libelle
         ];
     }
 }
