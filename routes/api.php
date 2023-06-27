@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Niveau;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NiveauController;
+use App\Http\Controllers\EleveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +27,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get("/niveaux/{id}", [NiveauController::class, 'find']);
 Route::get("/niveaux/", [NiveauController::class, 'index']);
 
+// Route::resource("/classes", ClasseController::class);
+// Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
 
-Route::resource("/classes", ClasseController::class);
-Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
+Route::resource("/eleves", EleveController::class)->only(['store']);
+
 
