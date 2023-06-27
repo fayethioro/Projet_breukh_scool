@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ClasseResource;
 use App\Http\Resources\NiveauResource;
 use App\Models\Niveau;
+use App\Traits\JoinQueryParams;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NiveauController extends Controller
 {
+    use JoinQueryParams;
     /**
      * Display a listing of the resource.
      */
@@ -21,6 +23,8 @@ class NiveauController extends Controller
 
         // // dd($user);
         // return $user;
+
+        // $this->test();
 
         $join = request()->input('join');
 
