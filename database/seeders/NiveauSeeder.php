@@ -17,6 +17,9 @@ class NiveauSeeder extends Seeder
                 "libelle" => "ELEMENTAIRE"
             ],
             [
+                "libelle" => 'MOYEN'
+            ],
+            [
                 "libelle" => 'SECONDAIRE'
             ]
         ];

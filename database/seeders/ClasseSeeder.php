@@ -37,6 +37,26 @@ class ClasseSeeder extends Seeder
                 "libelle" => "CM2",
                 "niveau_id" => 1
             ],
+            [
+                "libelle" => "6ieme",
+                "niveau_id" => 2
+            ],
+            [
+                "libelle" => "5eme",
+                "niveau_id" => 2
+            ],
+            [
+                "libelle" => "4eme",
+                "niveau_id" => 2
+            ],
+            [
+                "libelle" => "3eme",
+                "niveau_id" => 2
+            ],
+            [
+                "libelle" => "2nde",
+                "niveau_id" => 3
+            ],
 
         ];
 
