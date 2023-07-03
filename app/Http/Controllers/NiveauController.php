@@ -61,4 +61,8 @@ class NiveauController extends Controller
             'data'   => ClasseResource::collection($niveau->classes)
         ];
     }
+    public function show(Niveau $niveau)
+    {
+        return $niveau;
+    }
 }

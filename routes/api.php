@@ -6,6 +6,8 @@ use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NiveauController;
 use App\Http\Controllers\EleveController;
 
+use App\Http\Controllers\InscriptionController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,13 +25,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 */
 
 
+Route::post('/enregistrer', [InscriptionController::class, 'enregistrer']);
+
 // Route::resource("/niveaux", NiveauController::class);
-Route::get("/niveaux/{id}", [NiveauController::class, 'find']);
+Route::get("/niveaux/classe/{id}", [NiveauController::class, 'find']);
 Route::get("/niveaux/", [NiveauController::class, 'index']);
+Route::get("/niveaux/{id}", [NiveauController::class, 'show']);
 
 // Route::resource("/classes", ClasseController::class);
 // Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
 
-Route::resource("/eleves", EleveController::class)->only(['store']);
+Route::resource("/eleves", EleveController::class);
 
 
