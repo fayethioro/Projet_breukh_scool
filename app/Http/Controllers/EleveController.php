@@ -13,12 +13,43 @@ class EleveController extends Controller
      */
     public function index()
     {
-        return [
-            'statusCode' => Response::HTTP_OK,
-            'message' => 'liste des elves',
-            'data'   => Eleve::all()
-        ];
+//         $eleve = new Eleve();
+
+
+// return [
+//             'statusCode' => Response::HTTP_OK,
+//             'message' => 'Liste des élèves récupérée avec succès',
+//             'data'   => $eleve->getElevesProfilZeroEtatUn()
+//         ];
+
+
+
+        try {
+            // Récupérer les élèves dont l'état est égal à 1
+            $eleves = Eleve::where('etat', 1)->get();
+            return [
+                'statusCode' => Response::HTTP_OK,
+                'message' => 'Liste des élèves récupérée avec succès',
+                'data'   => $eleves
+            ];
+        } catch (\Exception $e) {
+            return [
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de la récupération des élèves',
+                'error' => $e->getMessage()
+            ];
+        }
+
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -59,25 +90,31 @@ class EleveController extends Controller
     {
         //
     }
-
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy($id)
     {
-        $eleve = Eleve::find($id);
+        try {
+            // Rechercher l'élève par son ID
+            $eleve = Eleve::findOrFail($id);
 
-        if ($eleve) {
-            // L'utilisateur existe, supprimez-le
-            $eleve->delete();
+            // Mettre à jour l'état de l'élève à 0
+            $eleve->etat = 0;
+            $eleve->save();
+
             return [
-                'statusCode' => Response::HTTP_NO_CONTENT,
-                'message' => 'suppression reussi',
-                'data'   => null
+                'statusCode' => Response::HTTP_OK,
+                'message' => 'Élève supprimé avec succès',
+                'data'   => $eleve,
             ];
-        } else {
-            // L'utilisateur n'existe pas, redirigez vers la page souhaitée
-            return redirect('http://127.0.0.1:8000/breukh-api/eleves');
+        } catch (\Exception $e) {
+            return [
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de la suppression de l\'élève',
+                'error' => $e->getMessage()
+            ];
         }
     }
 }

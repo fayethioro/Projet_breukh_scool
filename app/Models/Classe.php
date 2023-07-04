@@ -37,7 +37,8 @@ class Classe extends Model
         'password',
         'remember_token',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
 
     /**
@@ -49,8 +50,22 @@ class Classe extends Model
         'email_verified_at' => 'datetime',
     ];
 
-    // public function niveau()
-    // {
-    //     return $this->belongsTo(Niveau::class);
-    // }
+    public function anneeScolaire()
+    {
+        return $this->belongsTo(AnneeScolaire::class, 'id_annee_scolaire');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($classe) {
+            // Récupérer l'ID de l'année scolaire active
+            $anneeScolaireActive = AnneeScolaire::where('status', 1)->first();
+
+            if ($anneeScolaireActive) {
+                $classe->annee_scolaire_id = $anneeScolaireActive->id;
+            }
+        });
+    }
 }

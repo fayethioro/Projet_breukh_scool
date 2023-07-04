@@ -9,8 +9,18 @@ class Inscription extends Model
 {
     use HasFactory;
 
-    public function eleves()
+    public function eleve()
     {
-        return $this->belongsTo(Eleve::class);
+        return $this->belongsTo(Eleve::class, 'eleve_id');
+    }
+
+    public function classe()
+    {
+        return $this->belongsTo(Classe::class, 'classe');
+    }
+
+    public function anneeScolaire()
+    {
+        return $this->belongsTo(AnneeScolaire::class, 'annee_scolaire_id');
     }
 }

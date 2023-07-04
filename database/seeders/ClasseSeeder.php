@@ -2,64 +2,77 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Classe;
+use App\Models\AnneeScolaire;
 
 class ClasseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
+        $anneeScolaire = AnneeScolaire::where('status', 1)->first();
+
         $classes = [
             [
                 "libelle" => "CI",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" =>$anneeScolaire->id
             ],
             [
                 "libelle" => "CP",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
                 "libelle" => "CE1",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
                 "libelle" => "CE2",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
                 "libelle" => "CM1",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
                 "libelle" => "CM2",
-                "niveau_id" => 1
+                "niveau_id" => 1,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
                 "libelle" => "6ieme",
-                "niveau_id" => 2
+                "niveau_id" => 2,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
-                "libelle" => "5eme",
-                "niveau_id" => 2
+                "libelle" => "5ieme",
+                "niveau_id" => 2,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
-                "libelle" => "4eme",
-                "niveau_id" => 2
+                "libelle" => "4ieme",
+                "niveau_id" => 2,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
-                "libelle" => "3eme",
-                "niveau_id" => 2
+                "libelle" => "3ieme",
+                "niveau_id" => 2,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
             [
-                "libelle" => "2nde",
-                "niveau_id" => 3
+                "libelle" => "2nd",
+                "niveau_id" => 3,
+                "annee_scolaire_id" => $anneeScolaire->id
             ],
-
         ];
 
-        \App\Models\Classe::insert($classes);
+        Classe::insert($classes);
     }
 }

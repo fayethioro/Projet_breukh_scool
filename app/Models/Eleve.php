@@ -2,23 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Eleve extends Model
 {
-    use HasFactory;
+    use HasFactory; use SoftDeletes;
 
     protected $guarded =
     [
         'id',
     ];
+    protected $dates = ['deleted_at'];
+
     protected $hidden = [
         'password',
         'remember_token',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
+
+
+    // public function __construct( )
+    // {
+    //     sthis
+    // }
 
     protected static function boot()
     {
@@ -26,33 +37,41 @@ class Eleve extends Model
 
         static::creating(function ($eleve) {
             if ($eleve->profil === 0) {
-                $eleve->code = static::getNextCode();
+                $eleve->code = self::getNextCode($eleve);
             }
-            // elseif ($eleve->profil === 1) {
-            //     $eleve->code = null;
-            // }
         });
     }
 
-    private static function getNextCode()
+    protected static function getNextCode($eleve)
     {
-        /**
-         * récupérer le dernier élève avec un profil égal à 0, trié par ordre
-         *  décroissant du champ "code", et retourne le premier résultat.
-         */
-        $lastEleve = static::where('profil', 0)->orderByDesc('code')->first();
+        $eleves = self::where('profil', 0)
+                      ->where('etat', 1)
+                      ->orderBy('code', 'asc')
+                      ->get();
 
-        if ($lastEleve) {
-            return $lastEleve->code + 1;
+        $code = 1;
+
+        foreach ($eleves as $e) {
+            if ($e->code != $code) {
+                break;
+            }
+            $code++;
         }
 
-        return 1;
+        return $code;
     }
+
+
+
+
+
+
+
 }
 
 
 
-  
+
 
 
 
