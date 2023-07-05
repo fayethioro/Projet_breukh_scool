@@ -68,36 +68,6 @@ class ClasseController extends Controller
                     'message' => 'La classe sélectionnée n\'existe pas.'
                 ]);
             }
-            dd($validator);
-            // $disciplineId = $request->discipline_id;
-            // $evaluationId = $request->evaluation_id;
-
-            /**
-             *   Vérifier si une note maximale existe déjà pour
-             * la discipline, la classe et l'évaluation spécifiées
-             */
-            // $existingNoteMaximal = NoteMaximal::where('classe_id', $id)
-            //     ->where('evaluation_id', $evaluationId)
-            //     ->whereHas('discipline', function ($query) use ($disciplineId) {
-            //         $query->where('id', $disciplineId);
-            //     })
-            //     ->exists();
-
-            // if ($existingNoteMaximal) {
-            //     return ['message' =>
-            //     'Une note maximale avec le même libellé existe
-            // déjà pour cette classe et cette évaluation.
-            //  '];
-            // }
-            // Vérifier si la classe existe
-            // $classeExists = Classe::where('id', $id)->exists();
-            // if (!$classeExists) {
-            //     return response()->json([
-            //         'statusCode' => Response::HTTP_BAD_REQUEST,
-            //         'message' => 'La classe sélectionnée n\'existe pas.'
-            //     ]);
-            // }
-
             // Récupérer les données validées du formulaire
             $validatedData = $request->validated();
 
@@ -144,23 +114,6 @@ class ClasseController extends Controller
                 'message' => 'Classe introuvable',
             ];
         }
-
-        /**
-         *  Récupérer les élèves de la classe
-         */
-        // $eleves = DB::table('eleves')
-        //     ->join('inscriptions', 'eleves.id', '=', 'inscriptions.eleve_id')
-        //     ->where('inscriptions.classe_id', $id)
-        //     /**
-        //      * Filtre pour les élèves ayant un état de 1
-        //      */
-        //     ->where('eleves.etat', 1)
-        //     ->select('eleves.*')
-        //     ->get();
-        // $eleves = Inscription::join('eleves', 'inscriptions.eleve_id', 'eleves.id')->where('eleves.etat', 1)->get();
-        // where('classe_id' , $id)->with('eleve')->where('eleves.etat', 1)->get();
-
-
 
         return new ClasseResource($classe->load('inscriptions'));
         // return [

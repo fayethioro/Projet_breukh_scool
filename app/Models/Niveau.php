@@ -14,7 +14,7 @@ class Niveau extends Model
 
 
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -58,5 +58,4 @@ class Niveau extends Model
     {
         return $this->hasMany(Classe::class);
     }
-
 }
