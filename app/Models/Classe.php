@@ -52,7 +52,7 @@ class Classe extends Model
 
     public function anneeScolaire()
     {
-        return $this->belongsTo(AnneeScolaire::class, 'id_annee_scolaire');
+        return $this->belongsTo(AnneeScolaire::class, 'annee_scolaire_id');
     }
 
     protected static function boot()
@@ -60,12 +60,24 @@ class Classe extends Model
         parent::boot();
 
         static::creating(function ($classe) {
-            // Récupérer l'ID de l'année scolaire active
+             /**
+              * Récupérer l'ID de l'année scolaire active
+              */
             $anneeScolaireActive = AnneeScolaire::where('status', 1)->first();
 
             if ($anneeScolaireActive) {
                 $classe->annee_scolaire_id = $anneeScolaireActive->id;
             }
         });
+    }
+
+    public function noteMaximals()
+    {
+        return $this->hasMany(NoteMaximal::class);
+    }
+
+    public function disciplinesWithNotes()
+    {
+        return $this->noteMaximals()->with('discipline');
     }
 }

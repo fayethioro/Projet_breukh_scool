@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\PostAnneeScolaireRequest;
 use App\Models\AnneeScolaire;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,30 +23,18 @@ class AnneeScolaireController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostAnneeScolaireRequest $request)
     {
-        // Valider les données du formulaire
-        $request->validate([
-            'libelle' => [
-                'required',
-                'regex:/^\d{4}-\d{4}$/',
-                'unique:annee_scolaires',
-                function ($attribute, $value, $fail) {
-                    // Vérifier le format de la date
-                    $startDate = intval(substr($value, 0, 4));
-                    $endDate = intval(substr($value, 5, 4));
-
-                    if ($endDate !== ($startDate + 1)) {
-                        $fail('Le format de la date doit être "yyyy-yyyy"
-                        et la différence entre les années doit être de 1 an.');
-                    }
-                }
-            ],
-        ]);
-        // Créer une nouvelle année scolaire
+       /**
+        *  Créer une nouvelle année scolaire
+        */
         $annee = new AnneeScolaire();
         $annee->libelle = $request->libelle;
-        $annee->status = 1; // Par défaut, on désactive la nouvelle année scolaire
+
+        /**
+         * Par défaut, on désactive la nouvelle année scolaire
+         */
+        $annee->status = 1;
         $annee->save();
         return [
             'statusCode' => Response::HTTP_CREATED,
@@ -57,10 +45,10 @@ class AnneeScolaireController extends Controller
     public function getAnneeScolaire()
     {
         try {
-            $anneeScolaire = AnneeScolaire::where('statut', 1)->firstOrFail();
-            return response()->json($anneeScolaire);
+            return AnneeScolaire::where('statut', 1)->firstOrFail();
+            
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erreur lors de la récupération de l\'année scolaire'], 500);
+            return ['error' => 'Erreur lors de la récupération de l\'année scolaire'];
         }
     }
 

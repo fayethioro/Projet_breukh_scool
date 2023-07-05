@@ -2,71 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostInscriptionRequest;
 use App\Models\AnneeScolaire;
-use Carbon\Carbon;
 use App\Models\Eleve;
-use App\Models\Classe;
 use App\Models\Inscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\ClasseResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class InscriptionController extends Controller
 {
-    public function enregistrer(Request $request)
+    public function enregistrer(PostInscriptionRequest $request)
     {
         try {
-
-            // Valider les données du formulaire
-            $request->validate([
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'gender' => 'required',
-                'profil' => 'required',
-                'classeId' => 'required',
-            ]);
-
-            // Vérifier si la classe existe
-            $classeExists = $this->classeExists($request->classeId);
-            if (!$classeExists) {
-                return response()->json([
-                    'statusCode' => Response::HTTP_BAD_REQUEST,
-                    'message' => 'La classe sélectionnée n\'existe pas.'
-                ]);
-            }
-
-            // Début de la transaction
+           /**
+            *  Début de la transaction
+            */
             DB::beginTransaction();
 
-            // Récupérer l'année scolaire avec le statut 1
+            /**
+             * Récupérer l'année scolaire avec le statut 1
+             */
             $anneeScolaire = AnneeScolaire::where('status', 1)->first();
 
-            // Créer l'élève
+            /**
+             * Créer l'élève
+             */
             $eleve = $this->createEleve($request);
 
-            // Créer l'inscription
+           /**
+            *  Créer l'inscription
+            */
             $inscription = $this->createInscription($eleve, $request, $anneeScolaire);
 
-            // Commit de la transaction
+            /**
+             * Commit de la transaction pour marque la fin de la transaction
+             */
             DB::commit();
 
-            return response()->json([
+            return [
                 'statusCode' => Response::HTTP_CREATED,
                 'message' => 'Inscription réussie',
-                'data'   => $eleve
-            ]);
+                'eleves'   => $eleve,
+                'inscrit'   => $inscription
+            ];
         } catch (\Exception $e) {
-            // Rollback de la transaction en cas d'erreur
+           /**
+            *  Rollback de la transaction en cas d'erreur
+            */
             DB::rollback();
 
-            return response()->json([
+            return [
                 'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'Erreur lors de l\'inscription',
                 'error' => $e->getMessage()
-            ]);
+            ];
         }
     }
+
 
     private function createEleve(Request $request)
     {
@@ -92,11 +85,6 @@ class InscriptionController extends Controller
         $inscription->save();
 
         return $inscription;
-    }
-
-    private function classeExists($classeId)
-    {
-        return Classe::where('id', $classeId)->exists();
     }
 
 }

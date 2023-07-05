@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Evaluation;
 use Database\Seeders\NiveauSeeder;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AnneeScolaireSeeder::class,
             NiveauSeeder::class,
             ClasseSeeder::class,
+            EvaluationSeeder::class,
         ]);
     }
 }

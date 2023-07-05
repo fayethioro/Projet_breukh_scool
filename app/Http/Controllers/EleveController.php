@@ -13,19 +13,10 @@ class EleveController extends Controller
      */
     public function index()
     {
-//         $eleve = new Eleve();
-
-
-// return [
-//             'statusCode' => Response::HTTP_OK,
-//             'message' => 'Liste des élèves récupérée avec succès',
-//             'data'   => $eleve->getElevesProfilZeroEtatUn()
-//         ];
-
-
-
         try {
-            // Récupérer les élèves dont l'état est égal à 1
+            /**
+             *  Récupérer les élèves dont l'état est égal à 1
+             */
             $eleves = Eleve::where('etat', 1)->get();
             return [
                 'statusCode' => Response::HTTP_OK,

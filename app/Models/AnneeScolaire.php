@@ -27,20 +27,24 @@ class AnneeScolaire extends Model
     ];
     protected $table = 'annee_scolaires';
     public function activer()
-{
-    $this->status = 1;
-    $this->save();
-}
+    {
+        $this->status = 1;
+        $this->save();
+    }
 
-public function desactiver()
-{
-    $this->status = 0;
-    $this->save();
-}
+    public function desactiver()
+    {
+        $this->status = 0;
+        $this->save();
+    }
 
-public function estActive()
-{
-    return $this->status == 1;
-}
+    public function estActive()
+    {
+        return $this->status == 1;
+    }
 
+    public function classes()
+    {
+        return $this->hasMany(Classe::class);
+    }
 }

@@ -16,7 +16,8 @@ class ClasseResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "classe" => $this->libelle
+            "classe" => $this->libelle,
+            'annee_scolaire' => $this->anneeScolaire->libelle
         ];
     }
 }

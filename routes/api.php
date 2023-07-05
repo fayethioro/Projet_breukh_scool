@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DisciplineController;
+use App\Http\Controllers\EvaluationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EleveController;
@@ -8,6 +10,8 @@ use App\Http\Controllers\NiveauController;
 
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AnneeScolaireController;
+use App\Models\Discipline;
+use App\Models\Evaluation;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +45,13 @@ Route::resource("/eleves", EleveController::class);
 
 Route::resource("/annees", AnneeScolaireController::class);
 Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire']);
+
+Route::get('/evaluations', [EvaluationController::class, 'index']);
+
+
+Route::post("/classe/{id}/coef", [DisciplineController::class, 'createNoteMax']);
+Route::get("/classe/{id}/coef", [DisciplineController::class, 'getNoteMax']);
+
 
 
 

@@ -17,22 +17,12 @@ class NiveauController extends Controller
      */
     public function index()
     {
-        // $user = Niveau::find(1);
-
-        // $user->load('Classes');
-
-        // // dd($user);
-        // return $user;
-
-        // $this->test();
-
         $join = request()->input('join');
 
         $collection = collect(["classes"]);
 
         $data = Niveau::query()->when($collection->contains($join), function ($query) {
             return $query->with('classes');
-            // return $query;
         })->get();
 
         if (!$collection->contains($join)) {
