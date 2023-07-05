@@ -39,4 +39,9 @@ class NoteMaximal extends Model
     {
         return $this->belongsTo(Evaluation::class, 'evaluation_id');
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

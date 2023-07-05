@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NoteResource;
+use App\Models\Note;
 use App\Models\Eleve;
+use App\Models\NoteMaximal;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Nette\UnexpectedValueException;
 use Symfony\Component\HttpFoundation\Response;
 
 class EleveController extends Controller
@@ -55,7 +60,6 @@ class EleveController extends Controller
     }
     public function updadeEtat(Request $request)
     {
-        // dd($request);
         try {
 
             $ids = $request->input('ids');
@@ -68,7 +72,7 @@ class EleveController extends Controller
             return [
                 'statusCode' => Response::HTTP_OK,
                 'message' => 'Élèves supprimés avec succès',
-                'data'   => count ($eleves),
+                'data'   => count($eleves),
             ];
         } catch (\Exception $e) {
             return [
@@ -78,35 +82,12 @@ class EleveController extends Controller
             ];
         }
     }
-
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Eleve $eleve)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Eleve $eleve)
-    {
-        //
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-
     public function destroy($id)
     {
         try {
-        /**
-         *  Rechercher l'élève par son ID
-         */
+            /**
+             *  Rechercher l'élève par son ID
+             */
             $eleve = Eleve::findOrFail($id);
 
             /**
@@ -127,5 +108,83 @@ class EleveController extends Controller
                 'error' => $e->getMessage()
             ];
         }
+    }
+
+    public function addNoteEleve(Request $request, $classeId, $disciplineId, $evaluationId)
+    {
+        try {
+            // Valider les données reçues
+            $request->validate([
+                'notes' => 'required|array',
+                'notes.*.eleve_id' => 'required|integer',
+                'notes.*.note' => 'required|numeric',
+            ]);
+
+            // Récupérer l'ID de la note maximale
+            $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
+
+            // Ajouter les notes pour chaque élève
+            $notes = [];
+            foreach ($request->notes as $noteData) {
+                $note = new Note();
+                $note->eleve_id = $noteData['eleve_id'];
+                $note->note_maximal_id = $noteMaximalId;
+                $note->note = $noteData['note'];
+
+                // Vérifier si la note est inférieure à la note maximale
+                $noteMaximal = NoteMaximal::find($noteMaximalId);
+                if ($note->note > $noteMaximal->note_max) {
+                    return response()->json([
+                        'statusCode' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'message' => 'La note dépasse la note maximale',
+                        'data' => [
+                            'note' => $note->note,
+                            'note_max' => $noteMaximal->note_max,
+                        ]
+                    ]);
+                }
+
+                $note->save();
+
+                $note->load('noteMaximal');
+                $notes[] = $note;
+            }
+
+            return NoteResource::collection($notes);
+
+            // return response()->json([
+            //     'statusCode' => Response::HTTP_CREATED,
+            //     'message' => 'Notes ajoutées avec succès',
+            //     'data'   => $notes
+            // ]);
+
+        } catch (QueryException $e) {
+            return ['message' =>
+            'Une note  avec le même eleve existe
+        déjà pour cette classe et cette évaluation et cette discipline.
+         '];
+        } catch (\Exception $e) {
+            return [
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de l\'ajout de la note maximale',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+
+    private function getNoteMaximalById($classeId, $disciplineId, $evaluationId)
+    {
+        $noteMaximal = NoteMaximal::where([
+            'classe_id' => $classeId,
+            'discipline_id' => $disciplineId,
+            'evaluation_id' => $evaluationId
+        ])->first();
+
+        if ($noteMaximal) {
+            return $noteMaximal->id;
+        }
+
+        throw new UnexpectedValueException('Note maximale introuvable pour l\'évaluation spécifiée.');
     }
 }

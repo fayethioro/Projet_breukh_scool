@@ -24,13 +24,6 @@ class Eleve extends Model
         'updated_at',
         'deleted_at'
     ];
-
-
-    // public function __construct( )
-    // {
-    //     sthis
-    // }
-
     protected static function boot()
     {
         parent::boot();
@@ -61,7 +54,10 @@ class Eleve extends Model
         return $code;
     }
 
-
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 
 
 
