@@ -14,6 +14,7 @@ class EleveController extends Controller
     public function index()
     {
         try {
+
             /**
              *  Récupérer les élèves dont l'état est égal à 1
              */
@@ -30,17 +31,7 @@ class EleveController extends Controller
                 'error' => $e->getMessage()
             ];
         }
-
     }
-
-
-
-
-
-
-
-
-
 
     /**
      * Store a newly created resource in storage.
@@ -61,6 +52,31 @@ class EleveController extends Controller
             'message' => 'inscription reussi',
             'data'   => $eleves
         ];
+    }
+    public function updadeEtat(Request $request)
+    {
+        // dd($request);
+        try {
+
+            $ids = $request->input('ids');
+            // Rechercher les élèves par leurs IDs
+            $eleves = Eleve::whereIn('id', $ids)->get();
+
+            // Mettre à jour l'état des élèves à 0
+            Eleve::whereIn('id', $ids)->update(['etat' => 0]);
+
+            return [
+                'statusCode' => Response::HTTP_OK,
+                'message' => 'Élèves supprimés avec succès',
+                'data'   => count ($eleves),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de la suppression des élèves',
+                'error' => $e->getMessage()
+            ];
+        }
     }
 
 
@@ -88,10 +104,14 @@ class EleveController extends Controller
     public function destroy($id)
     {
         try {
-            // Rechercher l'élève par son ID
+        /**
+         *  Rechercher l'élève par son ID
+         */
             $eleve = Eleve::findOrFail($id);
 
-            // Mettre à jour l'état de l'élève à 0
+            /**
+             *  Mettre à jour l'état de l'élève à 0
+             */
             $eleve->etat = 0;
             $eleve->save();
 

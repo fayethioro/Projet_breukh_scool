@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\EvaluationController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\NoteMaxController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\ClasseController;
@@ -10,8 +10,7 @@ use App\Http\Controllers\NiveauController;
 
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AnneeScolaireController;
-use App\Models\Discipline;
-use App\Models\Evaluation;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -39,9 +38,14 @@ Route::get("/niveaux/{id}", [NiveauController::class, 'show']);
 Route::get("/classes", [ClasseController::class, 'index']);
 Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
 Route::get('/classes/{id}/eleves', [ClasseController::class, 'getEleveByClasse']);
+Route::post("/classe/{id}/coef", [ClasseController::class, 'addNoteMax']);
+Route::get("/classe/{id}/coef", [ClasseController::class, 'getNoteMax']);
 
 
-Route::resource("/eleves", EleveController::class);
+
+// Route::resource("/eleves", EleveController::class);
+Route::put("/eleves/sorti", [EleveController::class,'updadeEtat']);
+Route::get("/eleves", [EleveController::class,'index']);
 
 Route::resource("/annees", AnneeScolaireController::class);
 Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire']);
@@ -49,8 +53,13 @@ Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire
 Route::get('/evaluations', [EvaluationController::class, 'index']);
 
 
-Route::post("/classe/{id}/coef", [DisciplineController::class, 'createNoteMax']);
-Route::get("/classe/{id}/coef", [DisciplineController::class, 'getNoteMax']);
+// Route::post("/classe/{id}/coef", [NoteMaxController::class, 'createNoteMax']);
+// Route::get("/classe/{id}/coef", [NoteMaxController::class, 'getNoteMax']);
+
+Route::apiresource("/disciplines", DisciplineController::class)->only('index', 'store');
+
+
+
 
 
 

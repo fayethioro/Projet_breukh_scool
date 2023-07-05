@@ -76,6 +76,10 @@ class Classe extends Model
         return $this->hasMany(NoteMaximal::class);
     }
 
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
     public function disciplinesWithNotes()
     {
         return $this->noteMaximals()->with('discipline');
