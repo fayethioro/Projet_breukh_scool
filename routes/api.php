@@ -46,7 +46,8 @@ Route::get("/classe/{id}/coef", [ClasseController::class, 'getNoteMax']);
 // Route::resource("/eleves", EleveController::class);
 Route::put("/eleves/sorti", [EleveController::class,'updadeEtat']);
 Route::get("/eleves", [EleveController::class,'index']);
-Route::post("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}", [EleveController::class,'addNoteEleve']);
+Route::post("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
+                                        [EleveController::class,'addNoteEleve']);
 
 Route::resource("/annees", AnneeScolaireController::class);
 Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire']);

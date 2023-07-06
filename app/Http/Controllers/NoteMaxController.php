@@ -95,7 +95,7 @@ class NoteMaxController extends Controller
         return [
             'statusCode' => Response::HTTP_OK,
             'message' => "Liste des disciplines d'une classe",
-            'Niveau' => $classe->libelle,
+            'classe' => $classe->libelle,
             'data' => GetNoteMaxResource::collection($disciplines)
         ];
     }

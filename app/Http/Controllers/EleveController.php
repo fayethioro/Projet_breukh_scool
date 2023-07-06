@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EleveResource;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
 use App\Models\Eleve;
@@ -18,6 +19,7 @@ class EleveController extends Controller
      */
     public function index()
     {
+
         try {
 
             /**
@@ -27,7 +29,7 @@ class EleveController extends Controller
             return [
                 'statusCode' => Response::HTTP_OK,
                 'message' => 'Liste des élèves récupérée avec succès',
-                'data'   => $eleves
+                'data'   => EleveResource::collection($eleves)
             ];
         } catch (\Exception $e) {
             return [
@@ -120,10 +122,14 @@ class EleveController extends Controller
                 'notes.*.note' => 'required|numeric',
             ]);
 
-            // Récupérer l'ID de la note maximale
+           /**
+            *  Récupérer l'ID de la note maximale
+            */
             $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
 
-            // Ajouter les notes pour chaque élève
+            /**
+             * Ajouter les notes pour chaque élève
+             */
             $notes = [];
             foreach ($request->notes as $noteData) {
                 $note = new Note();
@@ -131,7 +137,9 @@ class EleveController extends Controller
                 $note->note_maximal_id = $noteMaximalId;
                 $note->note = $noteData['note'];
 
-                // Vérifier si la note est inférieure à la note maximale
+                /**
+                 * Vérifier si la note est inférieure à la note maximale
+                 */
                 $noteMaximal = NoteMaximal::find($noteMaximalId);
                 if ($note->note > $noteMaximal->note_max) {
                     return response()->json([
@@ -145,8 +153,6 @@ class EleveController extends Controller
                 }
 
                 $note->save();
-
-                $note->load('noteMaximal');
                 $notes[] = $note;
             }
 
@@ -155,7 +161,7 @@ class EleveController extends Controller
             // return response()->json([
             //     'statusCode' => Response::HTTP_CREATED,
             //     'message' => 'Notes ajoutées avec succès',
-            //     'data'   => $notes
+            //     'data'   => new  NoteResource($notes)
             // ]);
 
         } catch (QueryException $e) {

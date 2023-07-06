@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Models\Inscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +58,14 @@ class Eleve extends Model
     public function notes()
     {
         return $this->hasMany(Note::class);
+    }
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
+    public function classe()
+    {
+        return $this->belongsTo(Classe::class);
     }
 
 

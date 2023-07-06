@@ -102,6 +102,7 @@ class ClasseController extends Controller
 
     public function getEleveByClasse($id)
     {
+        
 
         /**
          * Récupérer la classe correspondant à l'ID fourni

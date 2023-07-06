@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostInscriptionRequest;
 use App\Models\AnneeScolaire;
+use App\Models\Classe;
 use App\Models\Eleve;
 use App\Models\Inscription;
 use Illuminate\Http\Request;
@@ -40,9 +41,11 @@ class InscriptionController extends Controller
              */
             DB::commit();
 
+            $classe = Classe::find($request->classeId);
             return [
                 'statusCode' => Response::HTTP_CREATED,
                 'message' => 'Inscription réussie',
+                'classe'=>$classe->libelle,
                 'eleves'   => $eleve,
                 'inscrit'   => $inscription
             ];

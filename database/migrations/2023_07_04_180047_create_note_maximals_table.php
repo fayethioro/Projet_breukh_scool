@@ -3,6 +3,7 @@
 use App\Models\Classe;
 use App\Models\Discipline;
 use App\Models\Evaluation;
+use App\Models\Semestre;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(Discipline::class)->constrained();
             $table->foreignIdFor(Classe::class)->constrained();
             $table->foreignIdFor(Evaluation::class)->constrained();
+            $table->foreignIdFor(Semestre::class)->constrained();
             $table->integer('note_max');
             $table->boolean('etat')->default(1);
 

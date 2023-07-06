@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('note_maximals', function (Blueprint $table) {
             $table->unique([
-                'classe_id', 'discipline_id', 'evaluation_id'
+                'classe_id', 'discipline_id', 'evaluation_id', 'semestre_id'
         ]);
 
 

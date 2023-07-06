@@ -20,6 +20,7 @@ class NoteResource extends JsonResource
             'classe' => $this->noteMaximal->classe_id,
             'discipline' => $this->noteMaximal->discipline_id,
             'evaluation' => $this->noteMaximal->evaluation_id,
+            'note'=>$this->note
         ];
     }
 }
