@@ -80,6 +80,11 @@ class Classe extends Model
     {
         return $this->hasMany(Inscription::class);
     }
+    public function semestre()
+    {
+        return $this->BelongsTo(semestre::class);
+    }
+
     public function disciplinesWithNotes()
     {
         return $this->noteMaximals()->with('discipline');

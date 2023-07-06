@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignIdFor(Semestre::class)->constrained();
             $table->integer('note_max');
             $table->boolean('etat')->default(1);
-
+           
         });
     }
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('libelle')->unique();
             $table->foreignId('niveau_id')->constrained('niveaux');
             $table->foreignId('annee_scolaire_id')->constrained('annee_scolaires');
+            $table->foreignId('semestre_id')->constrained('semestres');
 
         });
     }

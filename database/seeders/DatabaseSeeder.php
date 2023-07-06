@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AnneeScolaireSeeder::class,
+            SemestreSeeder::class,
             NiveauSeeder::class,
             ClasseSeeder::class,
             EvaluationSeeder::class,
         ]);
     }
 }
- 

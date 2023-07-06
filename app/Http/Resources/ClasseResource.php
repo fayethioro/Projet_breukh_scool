@@ -18,6 +18,7 @@ class ClasseResource extends JsonResource
             "id" => $this->id,
             "classe" => $this->libelle,
             'annee_scolaire' => $this->anneeScolaire->libelle,
+            'semestre' => $this->semestre->libelle,
             "eleves" =>InscriptionResource::collection( $this->whenLoaded('inscriptions'))
         ];
     }
