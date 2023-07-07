@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EnvoieMail;
 use App\Models\Classe;
 use App\Models\Niveau;
 use App\Models\Inscription;
@@ -12,6 +13,7 @@ use App\Http\Resources\ClasseResource;
 use App\Http\Resources\NoteMaxResource;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\GetNoteMaxResource;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
@@ -44,7 +46,7 @@ class ClasseController extends Controller
         ];
     }
 
-    
+
     public function getNoteMax($id)
     {
         $classe = Classe::findOrFail($id);
@@ -118,4 +120,9 @@ class ClasseController extends Controller
 
         return new ClasseResource($classe->load('inscriptions'));
     }
+
+    // public function  bar()
+    // {
+
+    // }
 }
