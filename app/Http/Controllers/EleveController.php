@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\EleveResource;
+use App\Http\Resources\GetNoteResource;
 use App\Http\Resources\NoteResource;
+use App\Models\Classe;
+use App\Models\Discipline;
+use App\Models\Evaluation;
 use App\Models\Note;
 use App\Models\Eleve;
 use App\Models\NoteMaximal;
 use App\Models\Semestre;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Nette\UnexpectedValueException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -114,76 +119,81 @@ class EleveController extends Controller
     }
 
     public function addNoteEleve(Request $request, $classeId, $disciplineId, $evaluationId)
-{
-    try {
-        // Valider les données reçues
-        $request->validate([
-            'notes' => 'required|array',
-            'notes.*.inscription_id' => 'required|integer',
-            'notes.*.note' => 'required|numeric',
-        ]);
+    {
+        try {
+            // Valider les données reçues
+            $request->validate([
+                'notes' => 'required|array',
+                'notes.*.inscription_id' => 'required|integer',
+                'notes.*.note' => 'required|numeric',
+            ]);
 
-        // Récupérer l'ID de la note maximale
-        $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
+            // Récupérer l'ID de la note maximale
+            $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
 
-        // Ajouter les notes pour chaque élève
-        $notes = [];
-        foreach ($request->notes as $noteData) {
-            $inscriptionId = $noteData['inscription_id'];
-            $note = $noteData['note'];
+            // Récupérer les IDs des inscriptions
+            $inscriptionIds = array_column($request->notes, 'inscription_id');
 
-            // Vérifier si une note existe déjà pour l'inscription spécifiée
-            $existingNote = Note::where('inscription_id', $inscriptionId)
+            // Récupérer les notes existantes pour les inscriptions spécifiées
+            $existingNotes = Note::whereIn('inscription_id', $inscriptionIds)
                 ->where('note_maximal_id', $noteMaximalId)
-                ->first();
+                ->get();
 
-            if ($existingNote) {
+            // Vérifier les notes existantes
+            foreach ($existingNotes as $existingNote) {
+                $inscriptionId = $existingNote->inscription_id;
                 return response()->json([
                     'statusCode' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'message' => 'Une note avec le même élève existe déjà pour cette classe, évaluation et discipline.',
                     'data' => [
-                        'note' => $note,
                         'inscription_id' => $inscriptionId,
                     ]
-                ]);
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            // Vérifier si la note est inférieure à la note maximale
-            $noteMaximal = NoteMaximal::find($noteMaximalId);
-            if ($note > $noteMaximal->note_max) {
-                return response()->json([
-                    'statusCode' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'message' => 'La note dépasse la note maximale',
-                    'data' => [
-                        'note' => $note,
-                        'note_max' => $noteMaximal->note_max,
-                    ]
-                ]);
+            // Ajouter les notes dans une transaction
+            DB::beginTransaction();
+
+            $notes = [];
+            foreach ($request->notes as $noteData) {
+                $inscriptionId = $noteData['inscription_id'];
+                $note = $noteData['note'];
+
+                // Vérifier si la note dépasse la note maximale
+                $noteMaximal = NoteMaximal::find($noteMaximalId);
+                if ($note > $noteMaximal->note_max) {
+                    DB::rollback();
+                    return response()->json([
+                        'statusCode' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'message' => 'La note dépasse la note maximale',
+                        'data' => [
+                            'note' => $note,
+                            'note_max' => $noteMaximal->note_max,
+                        ]
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                // Ajouter la note
+                $noteModel = new Note();
+                $noteModel->inscription_id = $inscriptionId;
+                $noteModel->note_maximal_id = $noteMaximalId;
+                $noteModel->note = $note;
+                $noteModel->save();
+
+                $notes[] = $noteModel;
             }
 
-            // Ajouter la note
-            $noteModel = new Note();
-            $noteModel->inscription_id = $inscriptionId;
-            $noteModel->note_maximal_id = $noteMaximalId;
-            $noteModel->note = $note;
-            $noteModel->save();
+            DB::commit();
 
-            $notes[] = $noteModel;
+            return $notes;
+        } catch (\Exception $e) {
+            return response()->json([
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de l\'ajout de la note',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return NoteResource::collection($notes);
-
-    } catch (\Exception $e) {
-        return [
-            'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            'message' => 'Erreur lors de l\'ajout de la note',
-            'error' => $e->getMessage()
-        ];
     }
-}
-
-
-
     private function getNoteMaximalById($classeId, $disciplineId, $evaluationId)
     {
         $semestreId = Semestre::where('status', 1)->first('id');
@@ -200,4 +210,40 @@ class EleveController extends Controller
 
         throw new UnexpectedValueException('Note maximale introuvable pour l\'évaluation spécifiée.');
     }
+
+    public function getNotesEleve($classeId, $disciplineId, $evaluationId)
+{
+    try {
+       /**
+        *  Récupérer l'ID de la note maximale
+        */
+
+        $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
+        /**
+         * Récupérer toutes les notes pour cette classe, discipline et évaluation
+         */
+        $notes = Note::where('note_maximal_id', $noteMaximalId)->get();
+        $classe= Classe::find($classeId);
+        $discipline= Discipline::findOrFail($disciplineId);
+        $evaluation = Evaluation::find($evaluationId);
+        $NoteMax = NoteMaximal::find($noteMaximalId);
+
+         // Retourner les notes sous forme de ressource
+        return [
+            "statusCode" =>Response::HTTP_OK,
+            "message" =>"Les notes  des eleves d'une classe dans un discipline pour une evaluation",
+            "classe" =>$classe->libelle,
+            "discipline" =>$discipline->libelle,
+            "evaluation" =>$evaluation->libelle,
+            "noteMax" =>$NoteMax->note_max,
+            "Notes des eleves" =>NoteResource::collection($notes)
+        ];
+    } catch (\Exception $e) {
+        return response()->json([
+            'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            'message' => 'Erreur lors de la récupération des notes',
+            'error' => $e->getMessage()
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
 }

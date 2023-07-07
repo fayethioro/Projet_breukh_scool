@@ -71,6 +71,7 @@ class InscriptionController extends Controller
         $eleve->prenom = $request->firstName;
         $eleve->date_naissance = $request->birthdayDate;
         $eleve->lieu_naissance = $request->birthdayPlace;
+        $eleve->email = $request->email;
         $eleve->sexe = $request->gender;
         $eleve->profil = $request->profil;
         $eleve->save();

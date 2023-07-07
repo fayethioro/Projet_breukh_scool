@@ -25,7 +25,7 @@ class PostInscriptionRequest extends FormRequest
         return [
             'firstName' => 'required',
             'lastName' => 'required',
-            // 'birthdayDate' => 'date_format:Y/m/d',
+            'email' => ['required', 'email', 'unique:eleves'],
             'gender' => 'required',
             'profil' => 'required',
             'classeId' => 'required',
@@ -46,6 +46,9 @@ class PostInscriptionRequest extends FormRequest
             'gender.required' => 'Le sexe est requis.',
             'profil.required' => 'Le profil est requis.',
             'classeId.required' => 'La classe est requise.',
+            'email.required' => 'le mail est requis.',
+            'email.email' => 'le mail doit etre valide.',
+            'email.unique' => 'le mail doit etre unique.',
         ];
     }
 

@@ -16,10 +16,11 @@ class NoteResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'note_max' => $this->noteMaximal->note_max,
-            'classe' => $this->noteMaximal->classe_id,
-            'discipline' => $this->noteMaximal->discipline_id,
-            'evaluation' => $this->noteMaximal->evaluation_id,
+            // 'note_max' => $this->noteMaximal->note_max,
+            // 'classe' => $this->noteMaximal->classe_id,
+            // 'discipline' => $this->noteMaximal->discipline_id,
+            // 'evaluation' => $this->noteMaximal->evaluation_id,
+           'eleve'=>new InscriptionResource( $this->inscriptions),
             'note'=>$this->note
         ];
     }

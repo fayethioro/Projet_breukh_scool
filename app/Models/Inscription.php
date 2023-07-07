@@ -24,10 +24,14 @@ class Inscription extends Model
     {
         return $this->belongsTo(Classe::class, 'classe_id');
     }
-   
+
 
     public function anneeScolaire()
     {
         return $this->belongsTo(AnneeScolaire::class, 'annee_scolaire_id');
+    }
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
     }
 }

@@ -25,6 +25,7 @@ class EleveResource extends JsonResource
             'sexe' => $this->sexe,
             'date_naissance' =>  $dateNaissance ,
             'lieu_naissace' => $lieuNaissance,
+            'email' => $this->email,
             'profil' => $profil,
         ];
     }

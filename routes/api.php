@@ -46,6 +46,8 @@ Route::put("/eleves/sorti", [EleveController::class,'updadeEtat']);
 Route::get("/eleves", [EleveController::class,'index']);
 Route::post("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
                                         [EleveController::class,'addNoteEleve']);
+Route::get("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
+                                        [EleveController::class,'getNotesEleve']);
 
 Route::resource("/annees", AnneeScolaireController::class);
 Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire']);
