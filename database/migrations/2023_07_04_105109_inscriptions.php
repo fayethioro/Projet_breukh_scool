@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\AnneeScolaire;
-use App\Models\Classe;
-use App\Models\Eleve;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

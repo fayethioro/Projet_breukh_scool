@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Eleve;
 use App\Models\Inscription;
 use App\Models\NoteMaximal;
 use Illuminate\Support\Facades\Schema;

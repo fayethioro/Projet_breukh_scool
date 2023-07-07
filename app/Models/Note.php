@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Inscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,9 +23,9 @@ class Note extends Model
         'deleted_at'
     ];
 
-    public function eleve()
+    public function inscription()
     {
-        return $this->belongsTo(Eleve::class);
+        return $this->belongsTo(Inscription::class);
     }
 
     /**
