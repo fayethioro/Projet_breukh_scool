@@ -158,11 +158,9 @@ class EleveController extends Controller
 
             return NoteResource::collection($notes);
 
-            // return response()->json([
-            //     'statusCode' => Response::HTTP_CREATED,
-            //     'message' => 'Notes ajoutées avec succès',
-            //     'data'   => new  NoteResource($notes)
-            // ]);
+           /**
+            * 
+            */
 
         } catch (QueryException $e) {
             return ['message' =>

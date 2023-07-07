@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Niveau;
+use App\Models\Semestre;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,14 +16,6 @@ class Classe extends Model
      *
      * @var array<int, string>
      */
-    // protected $fillable = [
-    //     'nomComplet',
-    //     'email',
-    //     'password',
-
-    // ];
-
-
     protected $guarded =
     [
         'id',
@@ -70,6 +63,11 @@ class Classe extends Model
             }
         });
     }
+    // public function getSemestreIdAttribute()
+    // {
+    //     $semestre = Semestre::where('status', 1)->first();
+    //     return $semestre ? $semestre->id : null;
+    // }
 
     public function noteMaximals()
     {
@@ -82,7 +80,7 @@ class Classe extends Model
     }
     public function semestre()
     {
-        return $this->BelongsTo(semestre::class);
+        return $this->BelongsTo(Semestre::class);
     }
 
     public function disciplinesWithNotes()

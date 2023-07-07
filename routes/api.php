@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\DisciplineController;
-use App\Http\Controllers\EvaluationController;
-use App\Http\Controllers\NoteMaxController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NiveauController;
+use App\Http\Controllers\NoteMaxController;
+use App\Http\Controllers\SemestreController;
+use App\Http\Controllers\DisciplineController;
 
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AnneeScolaireController;
 
@@ -41,9 +42,6 @@ Route::get('/classes/{id}/eleves', [ClasseController::class, 'getEleveByClasse']
 Route::post("/classe/{id}/coef", [ClasseController::class, 'addNoteMax']);
 Route::get("/classe/{id}/coef", [ClasseController::class, 'getNoteMax']);
 
-
-
-// Route::resource("/eleves", EleveController::class);
 Route::put("/eleves/sorti", [EleveController::class,'updadeEtat']);
 Route::get("/eleves", [EleveController::class,'index']);
 Route::post("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
@@ -54,11 +52,10 @@ Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire
 
 Route::get('/evaluations', [EvaluationController::class, 'index']);
 
-
-// Route::post("/classe/{id}/coef", [NoteMaxController::class, 'createNoteMax']);
-// Route::get("/classe/{id}/coef", [NoteMaxController::class, 'getNoteMax']);
-
 Route::apiresource("/disciplines", DisciplineController::class)->only('index', 'store');
+
+Route::apiresource("/semestres", SemestreController::class)->only('index', 'store');
+Route::put('/semestres/{id}/activer', [SemestreController::class, 'activer']);
 
 
 

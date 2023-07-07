@@ -27,7 +27,7 @@ class ClasseController extends Controller
         return [
             'statusCode' => Response::HTTP_OK,
             'message' => 'liste des classes',
-            'data'   => ClasseResource::collection(Classe::all())
+            'data'   => Classe::all()
         ];
     }
     public function classeById($id)
@@ -79,11 +79,6 @@ class ClasseController extends Controller
             $noteMax->note_max = $validatedData['note_max'];
             $noteMax->save();
 
-            // return [
-            //     'statusCode' => Response::HTTP_CREATED,
-            //     'message' => 'Note maximale ajoutée avec succès',
-            //     'data' => NoteMaxResource::collection($noteMax)
-            // ];
 
             return new NoteMaxResource($noteMax);
         } catch (QueryException $e) {
@@ -102,8 +97,6 @@ class ClasseController extends Controller
 
     public function getEleveByClasse($id)
     {
-        
-
         /**
          * Récupérer la classe correspondant à l'ID fourni
          */
@@ -117,10 +110,5 @@ class ClasseController extends Controller
         }
 
         return new ClasseResource($classe->load('inscriptions'));
-        // return [
-        //     'statusCode' => Response::HTTP_OK,
-        //     'message' => 'Liste des élèves de la classe',
-        //     'data' => $eleves,
-        // ];
     }
 }
