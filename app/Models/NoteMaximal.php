@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Semestre;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,6 +39,10 @@ class NoteMaximal extends Model
     public function evaluation()
     {
         return $this->belongsTo(Evaluation::class, 'evaluation_id');
+    }
+    public function semestre()
+    {
+        return $this->belongsTo(Semestre::class, 'semestre_id');
     }
 
     public function notes()

@@ -15,16 +15,17 @@ class EleveResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $profil = $this->profil == 0 ? "internant" : "externant";
+        $dateNaissance = $this->date_naissance ? $this->date_naissance : "non défini";
+        $lieuNaissance = $this->lieu_naissance ? $this->lieu_naissance : "non défini";
         return [
             "id" => $this->id,
             "prenom" => $this->prenom,
             'nom' => $this->nom,
             'sexe' => $this->sexe,
-            'date_naissance' => $this->date_naissance,
-            'lieu_naissace' => $this->lieu_naissace,
-            'profil' => $this->profil,
-            // 'inscription' => InscriptionResource::collection($this->inscriptions),
-
+            'date_naissance' =>  $dateNaissance ,
+            'lieu_naissace' => $lieuNaissance,
+            'profil' => $profil,
         ];
     }
 }

@@ -17,6 +17,7 @@ class GetNoteMaxResource extends JsonResource
         return [
             'discipline' => $this->discipline->libelle,
             'evaluation' => $this->evaluation->libelle,
+            'semestre' => $this->semestre->libelle,
             'note_max' => $this->note_max,
             'annee_scolaire' => $this->classe->anneeScolaire->libelle,
             'id' => $this->id

@@ -24,6 +24,7 @@ class NoteMaxRequest extends FormRequest
         return [
             'discipline_id' => 'required|exists:disciplines,id',
             'evaluation_id' => 'required|exists:evaluations,id',
+            'semestre_id' => 'required|exists:semestres,id',
             'note_max' => 'required|integer',
 
         ];
@@ -33,6 +34,7 @@ class NoteMaxRequest extends FormRequest
         return [
             'discipline_id.required' => 'id du discipline est requis.',
             'evaluation_id.required' => 'id de evaluation est requis.',
+            'semestre_id.required' => 'id du semestre est requis.',
             'note_max.required' => 'Le note max est requis.',
             'note_max.interger' => 'Le note max doit etre un entier.',
 

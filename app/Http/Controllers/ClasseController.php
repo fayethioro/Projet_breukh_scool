@@ -27,9 +27,12 @@ class ClasseController extends Controller
         return [
             'statusCode' => Response::HTTP_OK,
             'message' => 'liste des classes',
-            'data'   => Classe::all()
+            'data'   => ClasseResource::collection(Classe::all())
         ];
     }
+    /**
+     * Display a listing of the resource by id
+     */
     public function classeById($id)
     {
         $niveau = Niveau::find($id);
@@ -41,7 +44,7 @@ class ClasseController extends Controller
         ];
     }
 
-
+    
     public function getNoteMax($id)
     {
         $classe = Classe::findOrFail($id);
@@ -58,7 +61,7 @@ class ClasseController extends Controller
     {
         try {
 
-            $validator = Validator::make(["id"=>$id], [
+            $validator = Validator::make(["id" => $id], [
                 'id' => 'exists:classes,id',
 
             ]);
@@ -68,14 +71,19 @@ class ClasseController extends Controller
                     'message' => 'La classe sélectionnée n\'existe pas.'
                 ]);
             }
-            // Récupérer les données validées du formulaire
+           /**
+            *  Récupérer les données validées du formulaire
+            */
             $validatedData = $request->validated();
 
-            // Créer une nouvelle note maximale
+           /**
+            *  Créer une nouvelle note maximale
+            */
             $noteMax = new NoteMaximal();
             $noteMax->discipline_id = $validatedData['discipline_id'];
             $noteMax->classe_id = $id;
             $noteMax->evaluation_id = $validatedData['evaluation_id'];
+            $noteMax->semestre_id = $validatedData['semestre_id'];
             $noteMax->note_max = $validatedData['note_max'];
             $noteMax->save();
 
@@ -83,8 +91,7 @@ class ClasseController extends Controller
             return new NoteMaxResource($noteMax);
         } catch (QueryException $e) {
             return ['message' =>
-            'Une note maximale avec le même libellé existe
-            déjà pour cette classe et cette évaluation.
+            'Une note maximale avec le même libellé existe déjà pour cette classe et cette évaluation pour le meme semestre.
              '];
         } catch (\Exception $e) {
             return [

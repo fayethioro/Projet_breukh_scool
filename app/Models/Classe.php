@@ -63,11 +63,6 @@ class Classe extends Model
             }
         });
     }
-    // public function getSemestreIdAttribute()
-    // {
-    //     $semestre = Semestre::where('status', 1)->first();
-    //     return $semestre ? $semestre->id : null;
-    // }
 
     public function noteMaximals()
     {

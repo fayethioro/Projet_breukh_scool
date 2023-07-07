@@ -25,9 +25,14 @@ class PostInscriptionRequest extends FormRequest
         return [
             'firstName' => 'required',
             'lastName' => 'required',
+            // 'birthdayDate' => 'date_format:Y/m/d',
             'gender' => 'required',
             'profil' => 'required',
             'classeId' => 'required',
+            'birthdayDate' => [
+                'date_format:Y-m-d',
+                'before_or_equal:' . date('Y-m-d', strtotime('-5 years')),
+            ],
         ];
     }
 
@@ -36,6 +41,8 @@ class PostInscriptionRequest extends FormRequest
         return [
             'firstName.required' => 'Le prénom est requis.',
             'lastName.required' => 'Le nom est requis.',
+            'birthdayDate.date_format' => 'Le date de naissance doit etre de format date yyyy-mm-dd.',
+            'birthdayDate.before_or_equal' => 'il faut avoir au moins 5ans .',
             'gender.required' => 'Le sexe est requis.',
             'profil.required' => 'Le profil est requis.',
             'classeId.required' => 'La classe est requise.',

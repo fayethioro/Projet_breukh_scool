@@ -24,6 +24,7 @@ class Inscription extends Model
     {
         return $this->belongsTo(Classe::class, 'classe_id');
     }
+   
 
     public function anneeScolaire()
     {
