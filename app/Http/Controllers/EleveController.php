@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\EleveResource;
-use App\Http\Resources\GetNoteResource;
-use App\Http\Resources\NoteResource;
-use App\Models\Classe;
-use App\Models\Discipline;
-use App\Models\Evaluation;
 use App\Models\Note;
 use App\Models\Eleve;
-use App\Models\NoteMaximal;
+use App\Models\Classe;
 use App\Models\Semestre;
+use App\Models\Discipline;
+use App\Models\Evaluation;
+use App\Models\Inscription;
+use App\Models\NoteMaximal;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Nette\UnexpectedValueException;
+use App\Http\Resources\NoteResource;
+use App\Http\Resources\EleveResource;
+use App\Http\Requests\NoteEleveRequest;
+use App\Http\Resources\GetNoteResource;
+use Illuminate\Database\QueryException;
 use Symfony\Component\HttpFoundation\Response;
 
 class EleveController extends Controller
@@ -118,27 +120,33 @@ class EleveController extends Controller
         }
     }
 
-    public function addNoteEleve(Request $request, $classeId, $disciplineId, $evaluationId)
+    public function addNoteEleve(NoteEleveRequest $request, $classeId, $disciplineId, $evaluationId)
     {
         try {
-            // Valider les données reçues
-            $request->validate([
-                'notes' => 'required|array',
-                'notes.*.inscription_id' => 'required|integer',
-                'notes.*.note' => 'required|numeric',
-            ]);
-
             // Récupérer l'ID de la note maximale
             $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
 
             // Récupérer les IDs des inscriptions
             $inscriptionIds = array_column($request->notes, 'inscription_id');
 
+            foreach ($inscriptionIds as $inscription_id) {
+                $classeInscrit = Inscription::find($inscription_id);
+                if ($classeInscrit->classe_id != $classeId ) {
+                    return response()->json([
+                        'statusCode' => Response::HTTP_NOT_FOUND,
+                        'message' => 'eleve n \'est pas inscrit dans cette calsse',
+                        'data' => [
+                            'inscription_id' => $inscription_id,
+                        ]
+                    ]);
+                }
+            }
             // Récupérer les notes existantes pour les inscriptions spécifiées
             $existingNotes = Note::whereIn('inscription_id', $inscriptionIds)
                 ->where('note_maximal_id', $noteMaximalId)
                 ->get();
 
+            // dd($existingNotes);
             // Vérifier les notes existantes
             foreach ($existingNotes as $existingNote) {
                 $inscriptionId = $existingNote->inscription_id;
@@ -212,38 +220,72 @@ class EleveController extends Controller
     }
 
     public function getNotesEleve($classeId, $disciplineId, $evaluationId)
-{
-    try {
-       /**
-        *  Récupérer l'ID de la note maximale
-        */
+    {
+        try {
+            /**
+             *  Récupérer l'ID de la note maximale
+             */
 
-        $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
-        /**
-         * Récupérer toutes les notes pour cette classe, discipline et évaluation
-         */
-        $notes = Note::where('note_maximal_id', $noteMaximalId)->get();
-        $classe= Classe::find($classeId);
-        $discipline= Discipline::findOrFail($disciplineId);
-        $evaluation = Evaluation::find($evaluationId);
-        $NoteMax = NoteMaximal::find($noteMaximalId);
+            $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
+            /**
+             * Récupérer toutes les notes pour cette classe, discipline et évaluation
+             */
+            $notes = Note::where('note_maximal_id', $noteMaximalId)->get();
+            $classe = Classe::find($classeId);
+            $discipline = Discipline::findOrFail($disciplineId);
+            $evaluation = Evaluation::find($evaluationId);
+            $NoteMax = NoteMaximal::find($noteMaximalId);
 
-         // Retourner les notes sous forme de ressource
-        return [
-            "statusCode" =>Response::HTTP_OK,
-            "message" =>"Les notes  des eleves d'une classe dans un discipline pour une evaluation",
-            "classe" =>$classe->libelle,
-            "discipline" =>$discipline->libelle,
-            "evaluation" =>$evaluation->libelle,
-            "noteMax" =>$NoteMax->note_max,
-            "Notes des eleves" =>NoteResource::collection($notes)
-        ];
-    } catch (\Exception $e) {
-        return response()->json([
-            'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            'message' => 'Erreur lors de la récupération des notes',
-            'error' => $e->getMessage()
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            // Retourner les notes sous forme de ressource
+            return [
+                "statusCode" => Response::HTTP_OK,
+                "message" => "Les notes  des eleves d'une classe dans un discipline pour une evaluation",
+                "classe" => $classe->libelle,
+                "discipline" => $discipline->libelle,
+                "evaluation" => $evaluation->libelle,
+                "noteMax" => $NoteMax->note_max,
+                "Notes des eleves" => NoteResource::collection($notes)
+            ];
+        } catch (\Exception $e) {
+            return response()->json([
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Erreur lors de la récupération des notes',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-}
+
+    public function updateNoteEleve(Request $request, $classeId, $disciplineId, $evaluationId, $eleveId)
+    {
+        // Valider les données reçues
+        $request->validate([
+            'note' => 'required|numeric',
+        ]);
+
+        // Récupérer la note de l'élève à mettre à jour
+        $note = Note::whereHas('noteMaximal', function ($query) use ($classeId, $disciplineId, $evaluationId) {
+            $query->where('classe_id', $classeId)
+                ->where('discipline_id', $disciplineId)
+                ->where('evaluation_id', $evaluationId);
+        })->whereHas('inscription', function ($query) use ($eleveId) {
+            $query->where('eleve_id', $eleveId);
+        })->first();
+
+        if (!$note) {
+            return response()->json([
+                'statusCode' => Response::HTTP_NOT_FOUND,
+                'message' => 'Note introuvable',
+            ]);
+        }
+
+        // Mettre à jour la note
+        $note->note = $request->input('note');
+        $note->save();
+
+        return response()->json([
+            'statusCode' => Response::HTTP_OK,
+            'message' => 'Note mise à jour avec succès',
+            'data' => $note,
+        ]);
+    }
 }

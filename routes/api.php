@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NoteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\ClasseController;
@@ -48,6 +49,9 @@ Route::post("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
                                         [EleveController::class,'addNoteEleve']);
 Route::get("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}",
                                         [EleveController::class,'getNotesEleve']);
+ Route::put("/classe/{classeId}/discipline/{disciplineId}/eval/{evaluationId}/eleve/{eleveId}",
+                                      [EleveController::class, 'updateNoteEleve']);
+
 
 Route::resource("/annees", AnneeScolaireController::class);
 Route::get('/annee-scolaire', [AnneeScolaireController::class, 'getAnneeScolaire']);
@@ -58,6 +62,11 @@ Route::apiresource("/disciplines", DisciplineController::class)->only('index', '
 
 Route::apiresource("/semestres", SemestreController::class)->only('index', 'store');
 Route::put('/semestres/{id}/activer', [SemestreController::class, 'activer']);
+
+Route::get("/notes", [NoteController::class, 'index']);
+Route::get("/classe/{classe}/discipline/{discipline}/notes", [NoteController::class, 'getNotesByclasseByDiscipline']);
+Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
+                                                             [NoteController::class, 'getNotesByclasseByDisciplineByEleve']);
 
 
 

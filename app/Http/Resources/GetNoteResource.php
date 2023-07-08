@@ -2,22 +2,21 @@
 
 namespace App\Http\Resources;
 
-
+use App\Http\Resources\InscriptionResource;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class NoteResource extends JsonResource
+class GetNoteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-           'eleve'=>new InscriptionResource( $this->inscription),
-            'note'=>$this->note
+            "eleve" =>new InscriptionResource($this->notes),
         ];
     }
 }
