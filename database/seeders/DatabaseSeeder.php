@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             NiveauSeeder::class,
             ClasseSeeder::class,
             EvaluationSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

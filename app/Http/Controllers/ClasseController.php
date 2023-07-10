@@ -121,8 +121,5 @@ class ClasseController extends Controller
         return new ClasseResource($classe->load('inscriptions'));
     }
 
-    // public function  bar()
-    // {
-
-    // }
+    
 }

@@ -134,7 +134,7 @@ class EleveController extends Controller
                 if ($classeInscrit->classe_id != $classeId ) {
                     return response()->json([
                         'statusCode' => Response::HTTP_NOT_FOUND,
-                        'message' => 'eleve n \'est pas inscrit dans cette calsse',
+                        'message' => 'eleve n \'est pas inscrit dans cette classe',
                         'data' => [
                             'inscription_id' => $inscription_id,
                         ]
@@ -202,9 +202,10 @@ class EleveController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    private function getNoteMaximalById($classeId, $disciplineId, $evaluationId)
+    private function getNoteMaximalById($classeId, $disciplineId, $evaluationId )
     {
         $semestreId = Semestre::where('status', 1)->first('id');
+
         $noteMaximal = NoteMaximal::where([
             'classe_id' => $classeId,
             'discipline_id' => $disciplineId,
@@ -230,19 +231,27 @@ class EleveController extends Controller
             /**
              * Récupérer toutes les notes pour cette classe, discipline et évaluation
              */
+        $semestreId = Semestre::where('status', 1)->pluck('id')->first();
+
+        // dd($semestreId);
+
             $notes = Note::where('note_maximal_id', $noteMaximalId)->get();
             $classe = Classe::find($classeId);
             $discipline = Discipline::findOrFail($disciplineId);
             $evaluation = Evaluation::find($evaluationId);
+            $semestre = Semestre::find($semestreId);
+
+            // dd($semestre->libelle);
             $NoteMax = NoteMaximal::find($noteMaximalId);
 
             // Retourner les notes sous forme de ressource
             return [
                 "statusCode" => Response::HTTP_OK,
-                "message" => "Les notes  des eleves d'une classe dans un discipline pour une evaluation",
+                "message" => "Les notes  des eleves d'une classe dans un discipline pour une evaluation pour le semestre en cours",
                 "classe" => $classe->libelle,
                 "discipline" => $discipline->libelle,
                 "evaluation" => $evaluation->libelle,
+                "semestre" => $semestre->libelle,
                 "noteMax" => $NoteMax->note_max,
                 "Notes des eleves" => NoteResource::collection($notes)
             ];

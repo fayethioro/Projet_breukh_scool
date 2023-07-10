@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\NoteController;
+use App\Models\Evenement;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NiveauController;
 use App\Http\Controllers\NoteMaxController;
 use App\Http\Controllers\SemestreController;
-use App\Http\Controllers\DisciplineController;
 
+use App\Http\Controllers\EvenementController;
+use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AnneeScolaireController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -65,8 +66,12 @@ Route::put('/semestres/{id}/activer', [SemestreController::class, 'activer']);
 
 Route::get("/notes", [NoteController::class, 'index']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes", [NoteController::class, 'getNotesByclasseByDiscipline']);
+Route::get("/classe/{classe}/notes", [NoteController::class, 'getNotesByclasse']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
                                                              [NoteController::class, 'getNotesByclasseByDisciplineByEleve']);
+
+ Route::apiresource("/evenements", EvenementController::class)->only('index', 'store');
+
 
 
 

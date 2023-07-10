@@ -52,6 +52,7 @@ class Niveau extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
         // 'libelle'  => Str::lower('libelle'),
+
     ];
 
     public function classes()

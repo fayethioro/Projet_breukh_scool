@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Niveau;
+use App\Models\Participation;
 use App\Models\Semestre;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -82,4 +83,14 @@ class Classe extends Model
     {
         return $this->noteMaximals()->with('discipline');
     }
+    public function participations()
+    {
+        return $this->hasMany(Participation::class);
+    }
+
+    public function eleves()
+{
+    return $this->belongsToMany(User::class, 'inscriptions', 'classe_id', 'eleve_id');
+}
+
 }
