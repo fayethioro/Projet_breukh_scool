@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Eleve;
 use App\Models\Participation;
 use App\Models\Semestre;
 use App\Models\User;
@@ -77,6 +78,11 @@ class Classe extends Model
     public function semestre()
     {
         return $this->BelongsTo(Semestre::class);
+    }
+
+    public function eleve()
+    {
+        return $this->BelongsTo(Eleve::class);
     }
 
     public function disciplinesWithNotes()

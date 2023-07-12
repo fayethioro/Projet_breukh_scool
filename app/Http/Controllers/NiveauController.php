@@ -17,28 +17,24 @@ class NiveauController extends Controller
      */
     public function index()
     {
+        
         $join = request()->input('join');
-
+        
         $collection = collect(["classes"]);
-
-        $data = Niveau::query()->when($collection->contains($join), function ($query) {
-            return $query->with('classes');
-        })->get();
-
+        
         if (!$collection->contains($join)) {
             return [
                 'statusCode' => Response::HTTP_OK,
                 'message' => '',
                 'data'   => Niveau::all()
             ];
-        } else {
-
+        } 
             return [
                 'statusCode' => Response::HTTP_OK,
                 'message' => '',
-                'data'   => NiveauResource::collection($data)
+                'data'   => NiveauResource::collection($this->resolve(Niveau::class , $join))
             ];
-        }
+        
     }
 
     public function find(Niveau $id)

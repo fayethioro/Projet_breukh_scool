@@ -2,12 +2,15 @@
 
 namespace  App\Traits;
 
+use App\Models\Niveau;
+use Illuminate\Support\Facades\DB;
+
 
 trait JoinQueryParams
 {
-    public function test()
+    public function resolve($model , $relation)
     {
-        dd('OK');
+       return $model::with($relation)->get();
     }
 
     // ...

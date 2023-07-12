@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\EnvoieMail;
 use App\Models\Classe;
 use App\Models\Niveau;
-use App\Models\Inscription;
 use App\Models\NoteMaximal;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\NoteMaxRequest;
 use App\Http\Resources\ClasseResource;
 use App\Http\Resources\NoteMaxResource;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\GetNoteMaxResource;
-use Illuminate\Support\Facades\Mail;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,6 +32,7 @@ class ClasseController extends Controller
      */
     public function classeById($id)
     {
+        
         $niveau = Niveau::find($id);
         return [
             'statusCode' => Response::HTTP_OK,
@@ -45,8 +41,6 @@ class ClasseController extends Controller
             'data'   => ClasseResource::collection($niveau->classes)
         ];
     }
-
-
     public function getNoteMax($id)
     {
         $classe = Classe::findOrFail($id);

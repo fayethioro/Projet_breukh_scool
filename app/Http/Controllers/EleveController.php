@@ -16,8 +16,6 @@ use Nette\UnexpectedValueException;
 use App\Http\Resources\NoteResource;
 use App\Http\Resources\EleveResource;
 use App\Http\Requests\NoteEleveRequest;
-use App\Http\Resources\GetNoteResource;
-use Illuminate\Database\QueryException;
 use Symfony\Component\HttpFoundation\Response;
 
 class EleveController extends Controller
@@ -131,7 +129,7 @@ class EleveController extends Controller
 
             foreach ($inscriptionIds as $inscription_id) {
                 $classeInscrit = Inscription::find($inscription_id);
-                if ($classeInscrit->classe_id != $classeId ) {
+                if ($classeInscrit->classe_id != $classeId) {
                     return response()->json([
                         'statusCode' => Response::HTTP_NOT_FOUND,
                         'message' => 'eleve n \'est pas inscrit dans cette classe',
@@ -202,7 +200,7 @@ class EleveController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    private function getNoteMaximalById($classeId, $disciplineId, $evaluationId )
+    private function getNoteMaximalById($classeId, $disciplineId, $evaluationId)
     {
         $semestreId = Semestre::where('status', 1)->first('id');
 
@@ -231,19 +229,13 @@ class EleveController extends Controller
             /**
              * Récupérer toutes les notes pour cette classe, discipline et évaluation
              */
-        $semestreId = Semestre::where('status', 1)->pluck('id')->first();
-
-        // dd($semestreId);
+            $semestreId = Semestre::where('status', 1)->pluck('id')->first();
 
             $notes = Note::where('note_maximal_id', $noteMaximalId)->get();
             $classe = Classe::find($classeId);
             $discipline = Discipline::findOrFail($disciplineId);
             $evaluation = Evaluation::find($evaluationId);
             $semestre = Semestre::find($semestreId);
-
-            // dd($semestre->libelle);
-            $NoteMax = NoteMaximal::find($noteMaximalId);
-
             // Retourner les notes sous forme de ressource
             return [
                 "statusCode" => Response::HTTP_OK,
@@ -252,7 +244,7 @@ class EleveController extends Controller
                 "discipline" => $discipline->libelle,
                 "evaluation" => $evaluation->libelle,
                 "semestre" => $semestre->libelle,
-                "noteMax" => $NoteMax->note_max,
+                "noteMax" => NoteMaximal::find($noteMaximalId)->note_max,
                 "Notes des eleves" => NoteResource::collection($notes)
             ];
         } catch (\Exception $e) {
@@ -271,35 +263,13 @@ class EleveController extends Controller
             'note' => 'required|numeric',
         ]);
         $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
-        $inscription = Inscription::where(['eleve_id', $eleveId,
-                                          'classe_id', $classeId])->pluck('id');
-
-        dd($inscription);
-        // Récupérer la note de l'élève à mettre à jour
-        $note = Note::whereHas('noteMaximal', function ($query) use ($classeId, $disciplineId, $evaluationId) {
-            $query->where('classe_id', $classeId)
-                ->where('discipline_id', $disciplineId)
-                ->where('evaluation_id', $evaluationId);
-        })->whereHas('inscription', function ($query) use ($eleveId) {
-            $query->where('eleve_id', $eleveId);
-        })->first();
-
-
-        if (!$note) {
-            return response()->json([
-                'statusCode' => Response::HTTP_NOT_FOUND,
-                'message' => 'Note introuvable',
-            ]);
-        }
-
-        // Mettre à jour la note
-        $note->note = $request->input('note');
-        $note->save();
-
-        return response()->json([
+        $inscription = Inscription::where([['eleve_id', $eleveId], ['classe_id', $classeId]])->first()->id;
+        $notes = Note::where([['inscription_id', $inscription],['note_maximal_id', $noteMaximalId]])
+                       ->first()->update(['note' => $request->note]);
+        return [
             'statusCode' => Response::HTTP_OK,
             'message' => 'Note mise à jour avec succès',
-            'data' => $note,
-        ]);
+            'data' => $notes,
+        ];
     }
 }

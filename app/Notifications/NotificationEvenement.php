@@ -14,11 +14,11 @@ class NotificationEvenement extends Notification
     /**
      * Create a new notification instance.
      */
-    protected $evenement;
+    // protected $evenement;
 
-    public function __construct($evenement)
+    public function __construct(protected $evenement , protected $eleve)
     {
-        $this->evenement = $evenement;
+
     }
 
     /**
@@ -39,10 +39,11 @@ class NotificationEvenement extends Notification
         $subject = $this->evenement->libelle;
         $greeting = $this->isMorning() ? 'Bonjour' : 'Bonsoir';
         $dateEvenement = $this->evenement->date_evenement;
-
+        $eleve = $this->eleve;
         return (new MailMessage)
             ->subject($subject)
             ->greeting($greeting)
+            ->line("$eleve")
             ->line("Il y a un nouvel événement : $subject")
             ->line("Date de l'événement : $dateEvenement");
     }

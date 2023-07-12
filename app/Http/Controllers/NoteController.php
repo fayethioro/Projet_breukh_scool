@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\EnvoieMail;
-use App\Models\Eleve;
-use App\Models\Evenement;
+
 use App\Models\Note;
 use App\Models\Classe;
 use App\Models\Semestre;
@@ -13,10 +11,6 @@ use App\Models\Inscription;
 use App\Models\NoteMaximal;
 use App\Models\AnneeScolaire;
 use App\Http\Resources\NoteResource;
-use App\Models\Evaluation;
-use App\Models\Participation;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
 class NoteController extends Controller

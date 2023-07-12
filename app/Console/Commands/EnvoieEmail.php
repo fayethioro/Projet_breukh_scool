@@ -56,8 +56,7 @@ class EnvoieEmail extends Command
         foreach ($eleves as $eleve) {
             /** @var Eleve $ele */
             $ele = Eleve::where('id', $eleve)->first();
-            // Mail::to($ele->email)->send(new EnvoieMail());
-            $ele->notify(new  NotificationEvenement($event));
+            $ele->notify(new  NotificationEvenement($event , $ele->prenom));
         }
     }
 }
