@@ -88,9 +88,11 @@ class Classe extends Model
         return $this->hasMany(Participation::class);
     }
 
-    public function eleves()
+    public function evenements()
 {
-    return $this->belongsToMany(User::class, 'inscriptions', 'classe_id', 'eleve_id');
+    return $this->belongsToMany(Evenement::class, 'participations');
 }
+
+  
 
 }

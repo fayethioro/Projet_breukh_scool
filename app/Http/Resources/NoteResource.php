@@ -17,7 +17,7 @@ class NoteResource extends JsonResource
         return [
             'id' => $this->id,
            'eleve'=>new InscriptionResource( $this->inscription),
-            'note'=>$this->note
+            // 'note'=>$this->note
         ];
     }
 }

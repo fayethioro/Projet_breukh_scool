@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EvenementRequest;
+use App\Models\Classe;
 use App\Models\Evenement;
+use App\Models\Participation;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,8 +45,28 @@ class EvenementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Evenement $evenement)
+
+     public function ajouterParticipation(Request $request, $id)
     {
-        //
+        // Récupérer l'événement en fonction de l'ID
+        $evenement = Evenement::findOrFail($id);
+
+        // Récupérer les données de la requête
+        $classeIds = $request->input('classe_ids');
+
+        // Parcourir les IDs des classes et créer les participations
+        foreach ($classeIds as $classeId) {
+            $classe = Classe::findOrFail($classeId);
+
+            $participation = new Participation();
+            $participation->evenement_id = $evenement->id;
+            $participation->classe_id = $classe->id;
+            $participation->save();
+        }
+
+        // Retourner une réponse appropriée
+        return response()->json(['message' => 'Participations ajoutées avec succès'], 200);
     }
+
+
 }

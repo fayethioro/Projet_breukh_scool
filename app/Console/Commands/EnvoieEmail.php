@@ -2,10 +2,17 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
+use App\Models\Eleve;
+use App\Models\Classe;
 use App\Mail\EnvoieMail;
+use App\Models\Evenement;
+use App\Models\Inscription;
+use App\Models\Participation;
 use Illuminate\Console\Command;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Console\Scheduling\Schedule;
+use App\Notifications\NotificationEvenement;
 
 class EnvoieEmail extends Command
 {
@@ -26,9 +33,31 @@ class EnvoieEmail extends Command
     /**
      * Execute the console command.
      */
+
+
     public function handle()
     {
-        Mail::to('destinataire@example.com')->send(new EnvoieMail);
-        $this->info('E-mail est envoyée');
+
+
+        $dateRappel = Carbon::now()->addDay(); // Date et heure actuelles + 24 heures
+
+
+        $evenements = Evenement::where('date_evenement', '<=', $dateRappel)
+            ->with('classes.inscriptions.eleve')
+            ->pluck('id');
+            $event = Evenement::where('date_evenement', '<=', $dateRappel)->first();
+
+
+        $participation = Participation::where('evenement_id', '=', $evenements)->pluck('classe_id');
+
+        $eleves = Inscription::whereIn('classe_id', $participation)
+            ->pluck('eleve_id');
+
+        foreach ($eleves as $eleve) {
+            /** @var Eleve $ele */
+            $ele = Eleve::where('id', $eleve)->first();
+            // Mail::to($ele->email)->send(new EnvoieMail());
+            $ele->notify(new  NotificationEvenement($event));
+        }
     }
 }

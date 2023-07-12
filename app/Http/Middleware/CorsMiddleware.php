@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CorsMiddleware
 {
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next):Response
     {
         $response = $next($request);
 

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EnvoieMail;
+use App\Models\Eleve;
+use App\Models\Evenement;
 use App\Models\Note;
 use App\Models\Classe;
 use App\Models\Semestre;
@@ -10,6 +13,10 @@ use App\Models\Inscription;
 use App\Models\NoteMaximal;
 use App\Models\AnneeScolaire;
 use App\Http\Resources\NoteResource;
+use App\Models\Evaluation;
+use App\Models\Participation;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
 class NoteController extends Controller
@@ -32,24 +39,40 @@ class NoteController extends Controller
             ['semestre_id', '=', $semestreId],
         ])->pluck('id');
     }
+
     public function getNotesByclasseByDiscipline($classe, $discipline)
     {
-
         $results = $this->findNoteMaximalIdByclasseByDiscipline($classe, $discipline);
-        $semestreId = Semestre::where('status', 1)->pluck('id')->first();
+        $semestreId = Semestre::where('status', 1)->value('id');
 
         $classe = Classe::find($classe);
         $discipline = Discipline::findOrFail($discipline);
         $anneeScolaire = AnneeScolaire::findOrFail($classe->annee_scolaire_id);
         $semestre = Semestre::find($semestreId);
 
-        $notesEleves = Note::whereIn('note_maximal_id', $results)->get()->SortBy('inscription_id');
+        $notesEleves = Note::whereIn('note_maximal_id', $results)
+            ->get()
+            ->groupBy('inscription_id')
+            ->map(function ($notes) {
+
+            return $notes->map(function ($note) {
+                $evaluation = $note->noteMaximal->evaluation;
+                return [
+                    "eleve" => $note->inscription_id,
+                    $evaluation->libelle => $note->note,
+                ];
+            })->reduce(function ($carry, $item) {
+                return array_merge($carry, $item);
+            }, []);
+            })->values();
         return [
-            "statutCode" => Response::HTTP_OK,
-            "messages" => 'Liste des notes des eleves de ' . $classe->libelle . ' en '  . $discipline->libelle . ' de ' .  $semestre->libelle . ' de ' .  $anneeScolaire->libelle,
-            "NoteEleves" => $notesEleves
+            "statusCode" => Response::HTTP_OK,
+            "messages" => "Liste des notes des eleves de {$classe->libelle} en {$discipline->libelle} de {$semestre->libelle} de {$anneeScolaire->libelle}",
+            "NoteEleves" =>  $notesEleves
         ];
     }
+
+
 
     public function getNotesByclasseByDisciplineByEleve($classe, $discipline, $eleve)
     {
@@ -90,7 +113,6 @@ class NoteController extends Controller
             "messages" => 'Liste des notes des eleves de ' . $classe->libelle . ' de ' .  $semestre->libelle . ' de ' .  $anneeScolaire->libelle,
             "NoteEleves" => $notesEleves
         ];
-
     }
 
 
@@ -104,3 +126,7 @@ class NoteController extends Controller
         ])->pluck('id');
     }
 }
+
+
+
+

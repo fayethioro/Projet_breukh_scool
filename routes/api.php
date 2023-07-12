@@ -65,12 +65,15 @@ Route::apiresource("/semestres", SemestreController::class)->only('index', 'stor
 Route::put('/semestres/{id}/activer', [SemestreController::class, 'activer']);
 
 Route::get("/notes", [NoteController::class, 'index']);
+// Route::get("/event", [NoteController::class, 'email']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes", [NoteController::class, 'getNotesByclasseByDiscipline']);
 Route::get("/classe/{classe}/notes", [NoteController::class, 'getNotesByclasse']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
                                                              [NoteController::class, 'getNotesByclasseByDisciplineByEleve']);
 
  Route::apiresource("/evenements", EvenementController::class)->only('index', 'store');
+ Route::post("evenements/{id}/participation", [EvenementController::class , 'ajouterParticipation']);
+
 
 
 

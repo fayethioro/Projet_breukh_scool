@@ -2,6 +2,8 @@
 
 namespace App\Mail;
 
+use App\Models\Eleve;
+use App\Models\Evenement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -17,10 +19,15 @@ class EnvoieMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public $evenement;
+    public $eleve;
+    protected $libelle;
+    protected $dateEvenement;
+    // public function __construct(Evenement $evenement, Eleve $eleve)
+    // {
+    //     $this->evenement = $evenement;
+    //     $this->eleve = $eleve;
+    // }
 
     /**
      * Get the message envelope.
@@ -29,7 +36,7 @@ class EnvoieMail extends Mailable
     {
         return new Envelope(
             from: new Address('jeffrey@example.com', 'Jeffrey Way'),
-            subject: 'Envoie Mail',
+            subject: $this->libelle,
         );
     }
 

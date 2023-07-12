@@ -7,10 +7,11 @@ use App\Models\Inscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class Eleve extends Model
 {
-    use HasFactory; use SoftDeletes;
+    use HasFactory; use SoftDeletes; use HasFactory; use Notifiable;
 
     protected $guarded =
     [

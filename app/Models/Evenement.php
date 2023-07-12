@@ -62,7 +62,7 @@ class Evenement extends Model
         return $this->hasMany(Participation::class);
     }
     public function classes()
-    {
-        return $this->belongsToMany(Classe::class, 'participations', 'evenement_id', 'classe_id');
-    }
+{
+    return $this->belongsToMany(Classe::class, 'participations');
+}
 }

@@ -270,7 +270,11 @@ class EleveController extends Controller
         $request->validate([
             'note' => 'required|numeric',
         ]);
+        $noteMaximalId = $this->getNoteMaximalById($classeId, $disciplineId, $evaluationId);
+        $inscription = Inscription::where(['eleve_id', $eleveId,
+                                          'classe_id', $classeId])->pluck('id');
 
+        dd($inscription);
         // Récupérer la note de l'élève à mettre à jour
         $note = Note::whereHas('noteMaximal', function ($query) use ($classeId, $disciplineId, $evaluationId) {
             $query->where('classe_id', $classeId)
@@ -279,6 +283,7 @@ class EleveController extends Controller
         })->whereHas('inscription', function ($query) use ($eleveId) {
             $query->where('eleve_id', $eleveId);
         })->first();
+
 
         if (!$note) {
             return response()->json([
