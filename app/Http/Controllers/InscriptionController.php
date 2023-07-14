@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PostInscriptionRequest;
-use App\Models\AnneeScolaire;
-use App\Models\Classe;
+use ReflectionClass;
 use App\Models\Eleve;
+use App\Models\Classe;
 use App\Models\Inscription;
-use App\Traits\JoinQueryParams;
 use Illuminate\Http\Request;
+use App\Models\AnneeScolaire;
+use App\Traits\JoinQueryParams;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\InscriptionResource;
+use App\Http\Requests\PostInscriptionRequest;
 use Symfony\Component\HttpFoundation\Response;
+
 
 class InscriptionController extends Controller
 {
@@ -18,7 +21,7 @@ class InscriptionController extends Controller
     public function enregistrer(PostInscriptionRequest $request)
     {
         try {
-           
+
             // Début de la transaction
             DB::beginTransaction();
 
@@ -39,7 +42,7 @@ class InscriptionController extends Controller
                 'inscrit'   => $inscription
             ];
         } catch (\Exception $e) {
-              //Rollback de la transaction en cas d'erreur
+            //Rollback de la transaction en cas d'erreur
             DB::rollback();
 
             return [
@@ -77,4 +80,58 @@ class InscriptionController extends Controller
 
         return $inscription;
     }
+
+
+
+//     public function getRelations()
+//    {
+
+//     // Instanciation de la classe ReflectionClass pour le modèle Inscription
+//     $reflectionClass = new ReflectionClass(Inscription::class);
+
+//     // Récupération de toutes les méthodes du modèle
+//     $methods = $reflectionClass->getMethods();
+
+//     // Filtrer les méthodes pour ne garder que celles de la classe Inscription
+//     $filteredMethods = [];
+//     foreach ($methods as $method) {
+//         if (
+//             $method->class === Inscription::class &&
+//             $method->name !== 'factory' &&
+//             $method->name !== 'newFactory'
+//         ) {
+//             $filteredMethods[] = $method->name; // Ajouter uniquement le nom de la méthode
+//         }
+//     }
+
+//     return $filteredMethods;
+// }
+
+
+
+public function index()
+{
+    $modelClass = Inscription::class;
+    $collections = $this->getModelMethods($modelClass);
+    $collection = collect($collections);
+    $join = request()->input('join');
+
+
+    // $collection = collect(["classes"]);
+
+    if (!$collection->contains($join)) {
+        return [
+            'statusCode' => Response::HTTP_OK,
+            'message' => '',
+            'data'   => Inscription::all()
+        ];
+    }
+        return [
+            'statusCode' => Response::HTTP_OK,
+            'message' => '',
+            'data'   => InscriptionResource::collection($this->resolve(Inscription::class , $join))
+        ];
+}
+
+
 }

@@ -6,11 +6,13 @@ use App\Http\Requests\EvenementRequest;
 use App\Models\Classe;
 use App\Models\Evenement;
 use App\Models\Participation;
+use App\Traits\JoinQueryParams;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EvenementController extends Controller
 {
+    use JoinQueryParams;
     /**
      * Display a listing of the resource.
      */
@@ -67,6 +69,11 @@ class EvenementController extends Controller
         // Retourner une réponse appropriée
         return response()->json(['message' => 'Participations ajoutées avec succès'], 200);
     }
+
+      public function getParticipations()
+      {
+          return $this->hasJoin('classes');
+      }
 
 
 }

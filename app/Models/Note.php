@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Classe;
 use App\Models\Inscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,5 +35,10 @@ class Note extends Model
     public function noteMaximal()
     {
         return $this->belongsTo(NoteMaximal::class);
+    }
+
+    public function classe()
+    {
+        return $this->belongsToThrough(Classe::class, Inscription::class, 'classe_id', 'id', 'inscription_id');
     }
 }

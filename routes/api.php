@@ -1,12 +1,11 @@
 <?php
 
-use App\Models\Evenement;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NiveauController;
-use App\Http\Controllers\NoteMaxController;
 use App\Http\Controllers\SemestreController;
 
 use App\Http\Controllers\EvenementController;
@@ -14,6 +13,8 @@ use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AnneeScolaireController;
+use App\Http\Controllers\AuthController;
+use Symfony\Component\HttpFoundation\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,17 +27,24 @@ use App\Http\Controllers\AnneeScolaireController;
 |
 |
 |
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 */
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get("/niveaux/classe/{id}", [NiveauController::class, 'find']);
+    Route::get("/niveaux", [NiveauController::class, 'index'])->name('niveau.index');
+    Route::get("/niveaux/{id}", [NiveauController::class, 'show']);
+});
 
+
+Route::post("/niveaux", [NiveauController::class, 'store'])->name('niveau.store');
+
+Route::get('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'connect'])->name('auth.login');
+Route::delete('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::post('/enregistrer', [InscriptionController::class, 'enregistrer']);
+Route::get('/inscriptions', [InscriptionController::class, 'index']);
 
-Route::get("/niveaux/classe/{id}", [NiveauController::class, 'find']);
-Route::get("/niveaux", [NiveauController::class, 'index']);
-Route::get("/niveaux/{id}", [NiveauController::class, 'show']);
+
 
 Route::get("/classes", [ClasseController::class, 'index']);
 Route::get("/classes/{id}/niveau", [ClasseController::class, 'classeById']);
@@ -65,7 +73,6 @@ Route::apiresource("/semestres", SemestreController::class)->only('index', 'stor
 Route::put('/semestres/{id}/activer', [SemestreController::class, 'activer']);
 
 Route::get("/notes", [NoteController::class, 'index']);
-// Route::get("/event", [NoteController::class, 'email']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes", [NoteController::class, 'getNotesByclasseByDiscipline']);
 Route::get("/classe/{classe}/notes", [NoteController::class, 'getNotesByclasse']);
 Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
@@ -73,7 +80,10 @@ Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
 
  Route::apiresource("/evenements", EvenementController::class)->only('index', 'store');
  Route::post("evenements/{id}/participation", [EvenementController::class , 'ajouterParticipation']);
+ Route::get("event", [EvenementController::class , 'getParticipations']);
 
+ Route::get("/users", [UserController::class,'index']);
+ Route::get("/token", [UserController::class,'createAccessToken']);
 
 
 

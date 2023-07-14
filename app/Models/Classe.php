@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Eleve;
+use App\Models\Inscription;
 use App\Models\Participation;
 use App\Models\Semestre;
 use App\Models\User;
@@ -13,7 +14,7 @@ class Classe extends Model
 {
     use HasFactory;
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -55,9 +56,9 @@ class Classe extends Model
         parent::boot();
 
         static::creating(function ($classe) {
-             /**
-              * Récupérer l'ID de l'année scolaire active
-              */
+            /**
+             * Récupérer l'ID de l'année scolaire active
+             */
             $anneeScolaireActive = AnneeScolaire::where('status', 1)->first();
 
             if ($anneeScolaireActive) {
@@ -80,11 +81,6 @@ class Classe extends Model
         return $this->BelongsTo(Semestre::class);
     }
 
-    public function eleve()
-    {
-        return $this->BelongsTo(Eleve::class);
-    }
-
     public function disciplinesWithNotes()
     {
         return $this->noteMaximals()->with('discipline');
@@ -95,10 +91,11 @@ class Classe extends Model
     }
 
     public function evenements()
-{
-    return $this->belongsToMany(Evenement::class, 'participations');
-}
-
-  
-
+    {
+        return $this->belongsToMany(Evenement::class, 'participations');
+    }
+    public function notes()
+    {
+        return $this->hasManyThrough(Note::class, Inscription::class, 'classe_id', 'inscription_id');
+    }
 }

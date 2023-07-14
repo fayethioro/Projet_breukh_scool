@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Eleve;
 use App\Models\Note;
 use App\Models\Classe;
 use App\Models\Semestre;
@@ -19,7 +20,7 @@ class NoteController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {    
         return NoteResource::collection(Note::all());
     }
 
@@ -48,12 +49,17 @@ class NoteController extends Controller
             ->get()
             ->groupBy('inscription_id')
             ->map(function ($notes) {
-
+            //   return $notes;
             return $notes->map(function ($note) {
+
                 $evaluation = $note->noteMaximal->evaluation;
+                $noteMax = $note->noteMaximal->note_max;
+                $eleve = Eleve::find($note->inscription_id);
+
                 return [
-                    "eleve" => $note->inscription_id,
-                    $evaluation->libelle => $note->note,
+                    "prenom" =>$eleve->prenom,
+                    "nom" => $eleve->nom,
+                    $evaluation->libelle => $note->note. " / " . $noteMax,
                 ];
             })->reduce(function ($carry, $item) {
                 return array_merge($carry, $item);
@@ -62,7 +68,11 @@ class NoteController extends Controller
         return [
             "statusCode" => Response::HTTP_OK,
             "messages" => "Liste des notes des eleves de {$classe->libelle} en {$discipline->libelle} de {$semestre->libelle} de {$anneeScolaire->libelle}",
-            "NoteEleves" =>  $notesEleves
+            "classe" => $classe->libelle,
+            "discipline" => $discipline->libelle,
+            "semestre" => $semestre->libelle,
+            "anneeScolaire" => $anneeScolaire->libelle,
+            "eleves" =>  $notesEleves
         ];
     }
 

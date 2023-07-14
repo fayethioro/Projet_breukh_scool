@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostAnneeScolaireRequest;
 use App\Models\AnneeScolaire;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class AnneeScolaireController extends Controller
@@ -13,11 +14,25 @@ class AnneeScolaireController extends Controller
      */
     public function index()
     {
-        return [
-            'statusCode' => Response::HTTP_OK,
-            'message' => 'Inscription réussie',
-            'data'   => AnneeScolaire::all()
-        ];
+        // Instanciation de la classe ReflectionClass pour le modèle Inscription
+        $reflectionClass = new ReflectionClass(AnneeScolaire::class);
+
+        // Récupération de toutes les méthodes du modèle
+        $methods = $reflectionClass->getMethods();
+
+        // Filtrer les méthodes pour ne garder que celles de la classe AnneeScolaire
+        $filteredMethods = [];
+        foreach ($methods as $method) {
+            if (
+                $method->class === AnneeScolaire::class &&
+                $method->name !== 'factory' &&
+                $method->name !== 'newFactory'
+            ) {
+                $filteredMethods[] = $method;
+            }
+        }
+
+        return $filteredMethods;
     }
 
     /**
@@ -46,7 +61,7 @@ class AnneeScolaireController extends Controller
     {
         try {
             return AnneeScolaire::where('statut', 1)->firstOrFail();
-            
+
         } catch (\Exception $e) {
             return ['error' => 'Erreur lors de la récupération de l\'année scolaire'];
         }

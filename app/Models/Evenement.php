@@ -6,6 +6,7 @@ use App\Models\Participation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Evenement extends Model
 {
@@ -57,12 +58,12 @@ class Evenement extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function participations()
+    public function participations(): HasMany
     {
         return $this->hasMany(Participation::class);
     }
     public function classes()
-{
-    return $this->belongsToMany(Classe::class, 'participations');
-}
+    {
+        return $this->belongsToMany(Classe::class, 'participations');
+    }
 }
