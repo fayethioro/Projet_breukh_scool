@@ -19,13 +19,17 @@ class AuthController extends Controller
         $credentials = $request->validated();
         if (Auth::attempt($credentials)) {
         //    session()->regenerate();
-return UserController::createAccessToken();
-            // return redirect()->intended('http://127.0.0.1:8000/breukh-api/niveaux');
+
+        $user = Auth::user();
+            return [
+                "Message" => "Connesion reussi",
+                "token"   => $user->createToken('mon-Token')->plainTextToken
+            ];
         }
 
-        return to_route('auth.login')->withError([
+        return [
            "erreur" => "Email ou mot de passe invalide"
-        ])->onlyInput('email');
+        ];
     }
 
     public function logout()

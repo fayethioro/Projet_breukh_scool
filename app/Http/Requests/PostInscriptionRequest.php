@@ -25,7 +25,7 @@ class PostInscriptionRequest extends FormRequest
         return [
             'firstName' => 'required',
             'lastName' => 'required',
-            'email' => ['required', 'email', 'unique:eleves'],
+            'email' => ['required', 'email','regex:/^[a-z][a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/', 'unique:eleves'],
             'gender' => 'required',
             'profil' => 'required',
             'classeId' => 'required',
@@ -48,6 +48,7 @@ class PostInscriptionRequest extends FormRequest
             'classeId.required' => 'La classe est requise.',
             'email.required' => 'le mail est requis.',
             'email.email' => 'le mail doit etre valide.',
+            'email.regex' => 'le mail doit etre en format valide.',
             'email.unique' => 'le mail doit etre unique.',
         ];
     }

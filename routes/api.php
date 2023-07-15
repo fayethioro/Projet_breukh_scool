@@ -82,8 +82,11 @@ Route::get("/classe/{classe}/discipline/{discipline}/notes/eleves/{eleve}",
  Route::post("evenements/{id}/participation", [EvenementController::class , 'ajouterParticipation']);
  Route::get("event", [EvenementController::class , 'getParticipations']);
 
- Route::get("/users", [UserController::class,'index']);
- Route::get("/token", [UserController::class,'createAccessToken']);
+ Route::apiresource("/users", UserController::class);
+Route::get('/users/{id}/evenement', [UserController::class, 'getEvenementbyUser']);
+Route::get('/eleve/{id}/participations', [UserController::class, 'getParticipationEleve']);
+
+
 
 
 
