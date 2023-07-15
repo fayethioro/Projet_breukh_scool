@@ -21,24 +21,6 @@ class NiveauController extends Controller
 
         $niveau = $this->loadData(Niveau::query());
         return NiveauResource::collection($niveau->get());
-        // $modelClass = Niveau::class;
-        // $collections = $this->getModelMethods($modelClass);
-        // $collection = collect($collections);
-
-        // $join = request()->input('join');
-
-        // if (!$collection->contains($join)) {
-        //     return [
-        //         'statusCode' => Response::HTTP_OK,
-        //         'message' => '',
-        //         'data'   => Niveau::all()
-        //     ];
-        // }
-        // return [
-        //     'statusCode' => Response::HTTP_OK,
-        //     'message' => '',
-        //     'data'   => NiveauResource::collection($this->resolve(Niveau::class, $join))
-        // ];
     }
 
     public function find(Niveau $id)
@@ -57,11 +39,6 @@ class NiveauController extends Controller
     }
     public function store(Request $request)
     {
-        //  $validate = $request->validate([
-        //     "libelle" =>"required|string",
-        //  ]);
-        //  Niveau::create([...$validate, 'etat' => 1]);
-
         $niveau = Niveau::create(
            $request->validate(["libelle" => "required|string",
            ])

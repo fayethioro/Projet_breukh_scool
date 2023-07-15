@@ -80,58 +80,24 @@ class InscriptionController extends Controller
 
         return $inscription;
     }
+    public function index()
+    {
+        $modelClass = Inscription::class;
+        $collections = $this->getModelMethods($modelClass);
+        $collection = collect($collections);
+        $join = request()->input('join');
 
-
-
-//     public function getRelations()
-//    {
-
-//     // Instanciation de la classe ReflectionClass pour le modèle Inscription
-//     $reflectionClass = new ReflectionClass(Inscription::class);
-
-//     // Récupération de toutes les méthodes du modèle
-//     $methods = $reflectionClass->getMethods();
-
-//     // Filtrer les méthodes pour ne garder que celles de la classe Inscription
-//     $filteredMethods = [];
-//     foreach ($methods as $method) {
-//         if (
-//             $method->class === Inscription::class &&
-//             $method->name !== 'factory' &&
-//             $method->name !== 'newFactory'
-//         ) {
-//             $filteredMethods[] = $method->name; // Ajouter uniquement le nom de la méthode
-//         }
-//     }
-
-//     return $filteredMethods;
-// }
-
-
-
-public function index()
-{
-    $modelClass = Inscription::class;
-    $collections = $this->getModelMethods($modelClass);
-    $collection = collect($collections);
-    $join = request()->input('join');
-
-
-    // $collection = collect(["classes"]);
-
-    if (!$collection->contains($join)) {
+        if (!$collection->contains($join)) {
+            return [
+                'statusCode' => Response::HTTP_OK,
+                'message' => '',
+                'data'   => Inscription::all()
+            ];
+        }
         return [
             'statusCode' => Response::HTTP_OK,
             'message' => '',
-            'data'   => Inscription::all()
+            'data'   => InscriptionResource::collection($this->resolve(Inscription::class, $join))
         ];
     }
-        return [
-            'statusCode' => Response::HTTP_OK,
-            'message' => '',
-            'data'   => InscriptionResource::collection($this->resolve(Inscription::class , $join))
-        ];
-}
-
-
 }

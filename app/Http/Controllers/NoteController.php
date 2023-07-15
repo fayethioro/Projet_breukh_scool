@@ -20,7 +20,7 @@ class NoteController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {    
+    {
         return NoteResource::collection(Note::all());
     }
 
@@ -49,21 +49,20 @@ class NoteController extends Controller
             ->get()
             ->groupBy('inscription_id')
             ->map(function ($notes) {
-            //   return $notes;
-            return $notes->map(function ($note) {
+                return $notes->map(function ($note) {
 
-                $evaluation = $note->noteMaximal->evaluation;
-                $noteMax = $note->noteMaximal->note_max;
-                $eleve = Eleve::find($note->inscription_id);
+                    $evaluation = $note->noteMaximal->evaluation;
+                    $noteMax = $note->noteMaximal->note_max;
+                    $eleve = Eleve::find($note->inscription_id);
 
-                return [
-                    "prenom" =>$eleve->prenom,
-                    "nom" => $eleve->nom,
-                    $evaluation->libelle => $note->note. " / " . $noteMax,
-                ];
-            })->reduce(function ($carry, $item) {
-                return array_merge($carry, $item);
-            }, []);
+                    return [
+                        "prenom" => $eleve->prenom,
+                        "nom" => $eleve->nom,
+                        $evaluation->libelle => $note->note . " / " . $noteMax,
+                    ];
+                })->reduce(function ($carry, $item) {
+                    return array_merge($carry, $item);
+                }, []);
             })->values();
         return [
             "statusCode" => Response::HTTP_OK,
@@ -75,9 +74,6 @@ class NoteController extends Controller
             "eleves" =>  $notesEleves
         ];
     }
-
-
-
     public function getNotesByclasseByDisciplineByEleve($classe, $discipline, $eleve)
     {
 
@@ -130,7 +126,3 @@ class NoteController extends Controller
         ])->pluck('id');
     }
 }
-
-
-
-
